@@ -31,8 +31,65 @@ BOS.runSetup = function (done) {
     main,
     h('footer', { class: 'setup-foot' }, back, h('div', { class: 'grow' }), skip, next));
 
-  BOS.show(root);
-  render();
+  showWelcome(() => {
+    BOS.show(root);
+    render();
+  });
+
+  // BOS 02: перед настройкой — «Привет» и «Продолжить», которые по очереди сменяются на всех языках системы.
+  function showWelcome(onContinue) {
+    const WORDS = {
+      ru: ['Привет', 'Продолжить'],
+      en: ['Hello', 'Continue'],
+      uk: ['Привіт', 'Продовжити'],
+      de: ['Hallo', 'Weiter'],
+      es: ['Hola', 'Continuar'],
+      fr: ['Bonjour', 'Continuer'],
+      it: ['Ciao', 'Continua'],
+      pt: ['Olá', 'Continuar'],
+      pl: ['Cześć', 'Dalej'],
+      nl: ['Hoi', 'Doorgaan'],
+      tr: ['Merhaba', 'Devam'],
+      kk: ['Сәлем', 'Жалғастыру'],
+      zh: ['你好', '继续'],
+      ja: ['こんにちは', '続ける'],
+      ko: ['안녕하세요', '계속'],
+    };
+    const codes = BOS.LANGS.map((l) => l.code).filter((code) => WORDS[code]);
+    let at = Math.max(0, codes.indexOf(state.lang));
+    const hello = h('h1', { class: 'welcome-hello' });
+    const label = h('span');
+    const go = h('button', { type: 'button', class: 'btn primary welcome-go' }, label, icon('right'));
+    function paint() {
+      const code = codes[at];
+      hello.lang = code;
+      label.lang = code;
+      hello.textContent = WORDS[code][0];
+      label.textContent = WORDS[code][1];
+      hello.classList.remove('swap');
+      label.classList.remove('swap');
+      void hello.offsetWidth;
+      hello.classList.add('swap');
+      label.classList.add('swap');
+    }
+    paint();
+    const timer = setInterval(() => {
+      at = (at + 1) % codes.length;
+      paint();
+    }, 1800);
+    go.addEventListener('click', () => {
+      clearInterval(timer);
+      onContinue();
+    });
+    BOS.show(h('div', { class: 'welcome enter-fade' },
+      BOS.createWall(),
+      h('div', { class: 'welcome-center' },
+        mark('mark big'),
+        hello,
+        h('p', { class: 'welcome-ver' }, `${BOS.mobile ? 'BOS MOBILE' : 'BOS'} ${BOS.VERSION}`)),
+      h('div', { class: 'welcome-foot' }, go)));
+    go.focus({ preventScroll: true });
+  }
 
   function render() {
     current = steps[index]();
