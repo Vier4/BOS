@@ -26,7 +26,7 @@ window.BOS = (function () {
       wallpaper: 'bos02', wallpaperPicked: false, textColor: 'auto', airplane: false, best: {},
       home: ['files', 'browser', 'store', 'assistant', 'music', 'notes', 'games'], textSize: 'm', lock: null, guest: false, playlists: [],
       installed: [], removed: [], order: [], deskPos: {}, clock: 'auto', timeZone: null,
-      cursor: 'aurora', volume: 0.8, brightness: 1,
+      cursor: 'aurora', volume: 0.8, brightness: 1, kbLangs: null,
     },
     guestSession ? { setupDone: true, guest: true, lang: saved.lang || 'ru', region: saved.region || null } : saved
   );
@@ -186,6 +186,18 @@ window.BOS = (function () {
     applyBrightness();
     save();
     emit('brightness');
+  }
+
+  // Языки клавиатуры BOS MOBILE. Пока их не выбрали, это английский и язык системы.
+  function kbLangs() {
+    const known = BOS.KB_LAYOUTS || {};
+    const list = (state.kbLangs || ['en', state.lang]).filter((code, i, all) => known[code] && all.indexOf(code) === i);
+    return list.length ? list : ['en'];
+  }
+  function setKbLangs(list) {
+    state.kbLangs = list;
+    save();
+    emit('kbLangs');
   }
 
   let guestPhoto = null;
@@ -542,7 +554,7 @@ window.BOS = (function () {
     setTextColor, applyTextColor, TEXT_COLORS,
     setWallpaper, getPhoto, savePhoto,
     setAirplane, netStatus,
-    setCursor, setVolume, setBrightness, applyBrightness, MOBILE_APPS,
+    setCursor, setVolume, setBrightness, applyBrightness, MOBILE_APPS, kbLangs, setKbLangs,
     setTextSize, applyTextSize, TEXT_SIZES, setPinned,
     setPassword, checkPassword, sha256,
     APP_ORDER, appIcon, appSearch, powerOff,

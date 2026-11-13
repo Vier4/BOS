@@ -195,7 +195,38 @@
             clockInputs.map((input) => h('label', { class: 'seg' }, input, h('span', { i18n: `dt.clock.${input.value}` }))))),
           row('dt.zone', zone));
 
-        const pages = [['set.langRegion', locale], ['set.datetime', datetime], ['set.update', update]];
+        // Языки клавиатуры BOS MOBILE: какие раскладки переключает глобус.
+        const keyboard = h('div', { class: 'set-sub', hidden: true });
+        const langName = (code) => (BOS.LANGS.find((l) => l.code === code) || { name: code }).name;
+        const layoutNote = (code) => (BOS.KB_LAYOUTS[code].label === langName(code) ? '' : BOS.KB_LAYOUTS[code].label);
+        function fillKeyboard() {
+          const enabled = BOS.kbLangs();
+          const rest = Object.keys(BOS.KB_LAYOUTS).filter((code) => !enabled.includes(code));
+          const list = h('div', { class: 'kb-langs' }, enabled.map((code) => h('div', { class: 'kb-lang' },
+            h('span', { class: 'kb-lang-name' }, h('b', { lang: code }, langName(code)), layoutNote(code) ? h('small', {}, layoutNote(code)) : null),
+            h('button', {
+              type: 'button',
+              class: 'round',
+              i18nTitle: 'kb.remove',
+              disabled: enabled.length < 2,
+              onclick: () => BOS.setKbLangs(enabled.filter((other) => other !== code)),
+            }, BOS.icon('minus')))));
+          const pick = h('select', { class: 'input' }, rest.map((code) => h('option', { value: code }, layoutNote(code) ? `${langName(code)} — ${layoutNote(code)}` : langName(code))));
+          keyboard.replaceChildren(
+            h('p', { class: 'set-desc', i18n: 'kb.note' }),
+            h('h3', { class: 'kb-langs-title', i18n: 'kb.langs' }),
+            list,
+            rest.length
+              ? h('div', { class: 'kb-add' }, pick,
+                h('button', { type: 'button', class: 'btn outline', onclick: () => BOS.setKbLangs([...enabled, pick.value]) },
+                  BOS.icon('plus'), h('span', { i18n: 'kb.add' })))
+              : h('p', { class: 'set-desc', i18n: 'kb.allAdded' }));
+        }
+        win.listen('kbLangs', fillKeyboard);
+        win.listen('lang', fillKeyboard);
+        fillKeyboard();
+
+        const pages = [['set.langRegion', locale], ['set.datetime', datetime], ...(BOS.mobile ? [['set.keyboard', keyboard]] : []), ['set.update', update]];
         const tabs = pages.map(([key, pane]) => h('button', {
           type: 'button',
           class: 'set-tab',
@@ -207,7 +238,7 @@
           }),
         }));
         tabs[0].classList.add('on');
-        return [h('div', { class: 'set-tabs', role: 'tablist' }, tabs), locale, datetime, update];
+        return [h('div', { class: 'set-tabs', role: 'tablist' }, tabs), ...pages.map(([, pane]) => pane)];
       });
 
       section('account', 'set.account', () => {

@@ -1025,8 +1025,8 @@ webview.browser-frame { display: flex; }
 /* BOS 02: клавиатура BOS MOBILE */
 .kb { position: absolute; left: 0; right: 0; bottom: 26px; z-index: 40; display: flex; flex-direction: column; gap: 4px; padding: 10px 6px 8px; background: #3b6cf0; color: #fff; box-shadow: 0 -8px 24px rgba(0,0,0,.18); user-select: none; -webkit-user-select: none; touch-action: manipulation; animation: kb-up .16s ease-out both; }
 @keyframes kb-up { from { transform: translateY(30%); opacity: 0; } }
-.mobile.kb-open .win-layer { bottom: 228px; }
-.mobile.kb-open .m-library { bottom: 228px; }
+.mobile.kb-open .win-layer { bottom: calc(26px + var(--kb-h, 202px)); }
+.mobile.kb-open .m-library { bottom: calc(26px + var(--kb-h, 202px)); }
 .kb-rows { display: flex; flex-direction: column; gap: 2px; }
 .kb-row { display: flex; justify-content: center; align-items: center; gap: 2px; }
 .kb-key { flex: 1 1 0; max-width: 40px; height: 42px; border-radius: 8px; color: #fff; font: 500 calc(19px * var(--ts))/1 var(--font); letter-spacing: .08em; transition: background-color .08s; }
@@ -1048,7 +1048,7 @@ webview.browser-frame { display: flex; }
 .kb-enter .ic { width: 18px; height: 18px; }
 
 /* BOS 02: Камера */
-.cam { position: relative; height: 100%; display: grid; grid-template-rows: minmax(0, 1fr) auto; background: #000; color: #fff; }
+.cam { position: relative; height: 100%; display: grid; grid-template-rows: minmax(0, 1fr) auto auto; background: #000; color: #fff; }
 .cam-view { position: relative; overflow: hidden; display: grid; place-items: center; }
 .cam-video { width: 100%; height: 100%; object-fit: cover; background: #000; }
 .cam-video.mirror { transform: scaleX(-1); }
@@ -1092,3 +1092,39 @@ webview.browser-frame { display: flex; }
 .welcome .swap { animation: welcome-swap .5s ease both; }
 @keyframes welcome-swap { from { opacity: 0; transform: translateY(10px); filter: blur(4px); } }
 @media (prefers-reduced-motion: reduce) { .welcome .swap { animation: none; } }
+
+/* BOS 02: эмодзи на клавиатуре */
+.kb-emoji { font-size: 20px; }
+.kb-emoji-tabs { display: flex; align-items: center; gap: 2px; padding-bottom: 4px; border-bottom: 1px solid rgba(255,255,255,.25); }
+.kb-emoji-tab { flex: 1; height: 34px; border-radius: 8px; font-size: 20px; line-height: 1; opacity: .6; transition: opacity .1s, background-color .1s; }
+.kb-emoji-tab.on { opacity: 1; background: rgba(255,255,255,.25); }
+.kb-emoji-grid { display: grid; grid-template-columns: repeat(8, minmax(0, 1fr)); height: 138px; overflow-y: auto; padding-top: 4px; overscroll-behavior: contain; scrollbar-width: none; }
+.kb-emoji-grid::-webkit-scrollbar { display: none; }
+.kb-emoji-key { height: 40px; border-radius: 8px; font-size: 26px; line-height: 1; }
+.kb-emoji-key:active, .kb-emoji-tab:active { background: rgba(255,255,255,.3); }
+
+/* BOS 02: языки клавиатуры в Настройках */
+.kb-langs-title { margin: 14px 0 8px; font-size: calc(15px * var(--ts)); }
+.kb-langs { display: flex; flex-direction: column; border: 1px solid var(--line); border-radius: 14px; overflow: hidden; }
+.kb-lang { display: flex; align-items: center; gap: 10px; padding: 10px 12px; }
+.kb-lang + .kb-lang { border-top: 1px solid var(--line); }
+.kb-lang-name { flex: 1; display: flex; flex-direction: column; min-width: 0; }
+.kb-lang-name small { color: var(--ink-3); }
+.kb-lang .round:disabled { opacity: .35; cursor: default; }
+.kb-add { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
+.kb-add .input { flex: 1 1 180px; }
+
+/* BOS 02: видео в Камере и Фото */
+.cam-modes { display: flex; justify-content: center; gap: 6px; padding-top: 12px; }
+.cam-mode { padding: 6px 14px; border-radius: 999px; color: rgba(255,255,255,.75); font-weight: 600; font-size: calc(13px * var(--ts)); letter-spacing: .06em; text-transform: uppercase; }
+.cam-mode.on { color: #facc15; background: rgba(255,255,255,.12); }
+.cam-mode:disabled { opacity: .4; cursor: default; }
+.cam-timer { position: absolute; top: 14px; left: 50%; transform: translateX(-50%); padding: 4px 12px; border-radius: 8px; background: #ff3b30; color: #fff; font-weight: 600; font-variant-numeric: tabular-nums; }
+.cam-shutter.video i { background: #ff3b30; }
+.cam-shutter.recording i { transform: scale(.5); border-radius: 10px; }
+.cam-shutter i { transition: transform .15s, border-radius .15s; }
+.cam-last:disabled, .cam-round:disabled { opacity: .4; }
+.ph-cell { position: relative; }
+.ph-badge { position: absolute; right: 4px; bottom: 4px; display: inline-flex; align-items: center; gap: 2px; padding: 1px 6px 1px 3px; border-radius: 6px; background: rgba(0,0,0,.55); color: #fff; font-size: 11px; font-weight: 600; font-variant-numeric: tabular-nums; }
+.ph-badge .ic { width: 12px; height: 12px; }
+video.ph-big { background: #000; }
