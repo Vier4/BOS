@@ -26,7 +26,7 @@ window.BOS = (function () {
       wallpaper: 'bos02', wallpaperPicked: false, textColor: 'auto', airplane: false, best: {},
       home: ['files', 'browser', 'store', 'assistant', 'music', 'notes', 'games'], textSize: 'm', lock: null, guest: false, playlists: [],
       installed: [], removed: [], order: [], deskPos: {}, clock: 'auto', timeZone: null,
-      cursor: 'aurora', volume: 0.8, brightness: 1, kbLangs: null,
+      cursor: 'aurora', cursorSize: 'm', volume: 0.8, brightness: 1, kbLangs: null,
     },
     guestSession ? { setupDone: true, guest: true, lang: saved.lang || 'ru', region: saved.region || null } : saved
   );
@@ -169,6 +169,13 @@ window.BOS = (function () {
   // BOS 02: мышка, громкость и яркость.
   function setCursor(id) {
     state.cursor = id;
+    save();
+    emit('cursor');
+  }
+  // Размер мышки: от маленькой до очень большой.
+  const CURSOR_SIZES = { s: 0.8, m: 1, l: 1.35, xl: 1.8 };
+  function setCursorSize(size) {
+    state.cursorSize = size;
     save();
     emit('cursor');
   }
@@ -554,7 +561,7 @@ window.BOS = (function () {
     setTextColor, applyTextColor, TEXT_COLORS,
     setWallpaper, getPhoto, savePhoto,
     setAirplane, netStatus,
-    setCursor, setVolume, setBrightness, applyBrightness, MOBILE_APPS, kbLangs, setKbLangs,
+    setCursor, setCursorSize, CURSOR_SIZES, setVolume, setBrightness, applyBrightness, MOBILE_APPS, kbLangs, setKbLangs,
     setTextSize, applyTextSize, TEXT_SIZES, setPinned,
     setPassword, checkPassword, sha256,
     APP_ORDER, appIcon, appSearch, powerOff,

@@ -19,6 +19,7 @@
     arrow.innerHTML = BOS.cursorSvg(id);
     cursor.style.setProperty('--cur-a', BOS.CURSORS[id].a);
     cursor.style.setProperty('--cur-b', BOS.CURSORS[id].b);
+    cursor.style.setProperty('--cur-s', String(BOS.CURSOR_SIZES[BOS.state.cursorSize] || 1));
   }
   BOS.on('cursor', paint);
   paint();

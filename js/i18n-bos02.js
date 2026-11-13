@@ -815,3 +815,52 @@ BOS.addStrings({
     "upd.notes": "밝은 테마와 어두운 테마용 새 배경화면, 여러 언어 환영 화면, 상단 패널, 고를 수 있는 포인터 4종, 언어와 이모지를 지원하는 자체 키보드, BOS MOBILE의 동영상 녹화 카메라와 사진, 새 로고."
   }
 });
+
+// Размер мышки.
+BOS.addStrings({
+  "ru": {
+    "set.cursorSize": "Размер мышки"
+  },
+  "en": {
+    "set.cursorSize": "Pointer size"
+  },
+  "uk": {
+    "set.cursorSize": "Розмір мишки"
+  },
+  "de": {
+    "set.cursorSize": "Zeigergröße"
+  },
+  "es": {
+    "set.cursorSize": "Tamaño del puntero"
+  },
+  "fr": {
+    "set.cursorSize": "Taille du pointeur"
+  },
+  "it": {
+    "set.cursorSize": "Dimensione del puntatore"
+  },
+  "pt": {
+    "set.cursorSize": "Tamanho do ponteiro"
+  },
+  "pl": {
+    "set.cursorSize": "Rozmiar kursora"
+  },
+  "nl": {
+    "set.cursorSize": "Grootte van aanwijzer"
+  },
+  "tr": {
+    "set.cursorSize": "İşaretçi boyutu"
+  },
+  "kk": {
+    "set.cursorSize": "Тінтуір өлшемі"
+  },
+  "zh": {
+    "set.cursorSize": "指针大小"
+  },
+  "ja": {
+    "set.cursorSize": "ポインタのサイズ"
+  },
+  "ko": {
+    "set.cursorSize": "포인터 크기"
+  }
+});

@@ -75,8 +75,25 @@
         const cursors = h('div', { class: 'cursor-picks', role: 'radiogroup' }, cursorInputs.map((input) =>
           h('label', { class: 'cursor-pick', title: input.value }, input, h('span', { html: BOS.cursorSvg(input.value) }))));
 
+        const cursorSizeInputs = Object.keys(BOS.CURSOR_SIZES).map((size) => h('input', {
+          type: 'radio', name: 'set-cursor-size', value: size,
+          i18nTitle: `size.${size}`,
+          onchange: () => BOS.setCursorSize(size),
+        }));
+        const syncCursorSize = () => cursorSizeInputs.forEach((input) => { input.checked = input.value === state.cursorSize; });
+        win.listen('cursor', syncCursorSize);
+        syncCursorSize();
+        const paintSizes = () => cursorSizes.querySelectorAll('.seg span').forEach((span, i) => {
+          span.innerHTML = BOS.cursorSvg(BOS.CURSORS[state.cursor] ? state.cursor : 'aurora');
+          span.style.setProperty('--cur-s', String(BOS.CURSOR_SIZES[cursorSizeInputs[i].value]));
+        });
+        const cursorSizes = h('div', { class: 'segs cursor-sizes' }, cursorSizeInputs.map((input) => h('label', { class: 'seg' }, input, h('span'))));
+        win.listen('cursor', paintSizes);
+        paintSizes();
+
         return [
           BOS.mobile ? null : row('set.cursor', cursors),
+          BOS.mobile ? null : row('set.cursorSize', cursorSizes),
           row('set.textSize', sizes),
           row('set.theme', h('div', { class: 'segs' },
             h('label', { class: 'seg' }, inputs[0], h('span', { i18n: 'theme.light' })),
