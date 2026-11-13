@@ -48,7 +48,7 @@
         h('p', { i18n: `store.desc.${id}` }),
         actionsFor(id)));
 
-      const builtIn = [...BOS.APP_ORDER, ...(BOS.mobile ? BOS.MOBILE_APPS : [])].filter(BOS.canRemove).map((id) => h('div', { class: 'bstore-row' },
+      const builtIn = [...BOS.APP_ORDER, ...(BOS.mobile && BOS.is02 ? BOS.MOBILE_APPS : [])].filter(BOS.canRemove).map((id) => h('div', { class: 'bstore-row' },
         BOS.appTile(id),
         h('b', { i18n: BOS.apps[id].title }),
         actionsFor(id)));

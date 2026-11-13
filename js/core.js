@@ -28,11 +28,15 @@ window.BOS = (function () {
       installed: [], removed: [], order: [], deskPos: {}, clock: 'auto', timeZone: null,
       cursor: 'aurora', cursorSize: 'm', volume: 0.8, brightness: 1, kbLangs: null,
     },
-    guestSession ? { setupDone: true, guest: true, lang: saved.lang || 'ru', region: saved.region || null } : saved
+    guestSession ? { setupDone: true, guest: true, lang: saved.lang || 'ru', region: saved.region || null, os: saved.os } : saved
   );
+  // Установленная версия системы. BOS 02 ставится только кнопкой «Обновить» в Настройках,
+  // поэтому все устройства (и те, где BOS 02 уже запускалась) сначала работают как BOS 01.
+  const is02 = state.os === '02';
+  if (is02) document.documentElement.classList.add('bos02');
   const save = () => { if (!guestSession) write(STATE_KEY, state); };
-  // Обои BOS 02 — новые обои по умолчанию; выбранные вручную не трогаем.
-  if (!state.wallpaperPicked) state.wallpaper = 'bos02';
+  // Обои по умолчанию: в BOS 02 — обои BOS 02, в BOS 01 — листик. Выбранные вручную не трогаем.
+  if (!state.wallpaperPicked || (!is02 && state.wallpaper === 'bos02')) state.wallpaper = is02 ? 'bos02' : 'leaf';
 
   const displayName = () => (state.guest ? BOS.t('guest.name') : state.name);
   const accountLabel = () => (state.id ? state.id + ID_SUFFIX : BOS.t('guest.label'));
@@ -185,6 +189,7 @@ window.BOS = (function () {
     emit('volume');
   }
   function applyBrightness() {
+    if (!is02) return;
     const screen = document.getElementById('screen');
     if (screen) screen.style.filter = state.brightness < 1 ? `brightness(${state.brightness})` : '';
   }
@@ -205,6 +210,20 @@ window.BOS = (function () {
     state.kbLangs = list;
     save();
     emit('kbLangs');
+  }
+
+  // Обновление до BOS 02 и возврат на BOS 01. После смены версии система перезапускается.
+  function setOs(version) {
+    state.os = version;
+    if (!state.wallpaperPicked) state.wallpaper = version === '02' ? 'bos02' : 'leaf';
+    if (guestSession) {
+      // Гость ничего не сохраняет, но версия системы общая для устройства.
+      const owner = read(STATE_KEY) || {};
+      owner.os = version;
+      write(STATE_KEY, owner);
+    } else {
+      save();
+    }
   }
 
   let guestPhoto = null;
@@ -291,6 +310,8 @@ window.BOS = (function () {
     try {
       localStorage.removeItem(STATE_KEY);
       localStorage.removeItem(PHOTO_KEY);
+      // Сброс не откатывает систему: после него настройка начнётся уже в установленной версии.
+      if (state.os) write(STATE_KEY, { os: state.os });
     } catch {}
     deleteDatabasesThenReload(['bos-files', 'bos-data']);
   }
@@ -455,7 +476,7 @@ window.BOS = (function () {
   state.removed = state.removed.filter(canRemove);
   const isInstalled = (id) => (STORE_APPS.includes(id) ? state.installed.includes(id) : !state.removed.includes(id));
   function availableApps() {
-    const list = [...APP_ORDER, ...(BOS.mobile ? MOBILE_APPS : []), ...STORE_APPS].filter(isInstalled);
+    const list = [...APP_ORDER, ...(BOS.mobile && is02 ? MOBILE_APPS : []), ...STORE_APPS].filter(isInstalled);
     const rank = new Map(list.map((id, i) => {
       const placed = state.order.indexOf(id);
       return [id, placed < 0 ? 1000 + i : placed];
@@ -566,7 +587,7 @@ window.BOS = (function () {
     setPassword, checkPassword, sha256,
     APP_ORDER, appIcon, appSearch, powerOff,
     STORE_APPS, availableApps, isAvailable, isInstalled, canRemove, install, uninstall, setOrder, setHomeOrder, setDeskPos, arrangeDesk,
-    VERSION: '02',
+    VERSION: is02 ? '02' : '01', is02, setOs,
     guestSession, startGuest, endGuest, displayName, accountLabel,
     knownIds, rememberId, normalizeId, isValidId, ID_SUFFIX,
     factoryReset,

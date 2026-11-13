@@ -31,10 +31,13 @@ BOS.runSetup = function (done) {
     main,
     h('footer', { class: 'setup-foot' }, back, h('div', { class: 'grow' }), skip, next));
 
-  showWelcome(() => {
+  // Приветствие на разных языках появилось в BOS 02.
+  const begin = () => {
     BOS.show(root);
     render();
-  });
+  };
+  if (BOS.is02) showWelcome(begin);
+  else begin();
 
   // BOS 02: перед настройкой — «Привет» и «Продолжить», которые по очереди сменяются на всех языках системы.
   function showWelcome(onContinue) {

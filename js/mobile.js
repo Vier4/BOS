@@ -117,9 +117,10 @@ BOS.runMobile = function () {
   }
 
   // Верхняя шторка: смахните вниз по строке состояния.
-  const shade = BOS.createShade();
-  const statusBar = h('header', { class: 'm-status' }, statusTime, h('span', { class: 'm-status-right' }, planeMark, h('span', {}, 'BOS 02')));
-  shade.attachHandle(statusBar);
+  // В BOS 01 шторки нет.
+  const shade = BOS.is02 ? BOS.createShade() : null;
+  const statusBar = h('header', { class: 'm-status' }, statusTime, h('span', { class: 'm-status-right' }, planeMark, h('span', {}, BOS.is02 ? 'BOS 02' : 'BOS')));
+  if (shade) shade.attachHandle(statusBar);
 
   // Полоска внизу — кнопка «Домой»: сворачивает приложения и показывает главный экран.
   const homeBar = h('button', {
@@ -128,7 +129,7 @@ BOS.runMobile = function () {
     i18nTitle: 'mobile.home',
     onclick: () => {
       toggleLibrary(false);
-      shade.close();
+      if (shade) shade.close();
       homeEdit.stop();
       wm.hideAll();
     },
@@ -148,7 +149,7 @@ BOS.runMobile = function () {
   });
 
   // Камера и Фото появились в BOS 02: один раз кладём их на главный экран.
-  if (!state.home02) {
+  if (BOS.is02 && !state.home02) {
     state.home02 = true;
     BOS.MOBILE_APPS.forEach((id) => { if (!state.home.includes(id)) state.home.push(id); });
     BOS.save();
@@ -156,8 +157,9 @@ BOS.runMobile = function () {
   }
 
   const root = h('div', { class: 'mobile enter-fade' });
-  const keyboard = BOS.createKeyboard(root);
-  root.append(
+  // Своя клавиатура — часть BOS 02; в BOS 01 работает клавиатура телефона.
+  const keyboard = BOS.is02 ? BOS.createKeyboard(root) : null;
+  root.append(...[
     BOS.createWall(),
     statusBar,
     homeMain,
@@ -165,7 +167,8 @@ BOS.runMobile = function () {
     homeBar,
     layer,
     library,
-    shade.el,
-    keyboard.el);
+    shade && shade.el,
+    keyboard && keyboard.el,
+  ].filter(Boolean));
   BOS.show(root);
 };

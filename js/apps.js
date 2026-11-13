@@ -92,8 +92,8 @@
         paintSizes();
 
         return [
-          BOS.mobile ? null : row('set.cursor', cursors),
-          BOS.mobile ? null : row('set.cursorSize', cursorSizes),
+          BOS.mobile || !BOS.is02 ? null : row('set.cursor', cursors),
+          BOS.mobile || !BOS.is02 ? null : row('set.cursorSize', cursorSizes),
           row('set.textSize', sizes),
           row('set.theme', h('div', { class: 'segs' },
             h('label', { class: 'seg' }, inputs[0], h('span', { i18n: 'theme.light' })),
@@ -155,8 +155,10 @@
         showFormat();
         const locale = h('div', { class: 'set-sub' }, row('set.language', lang), row('set.region', region), row('set.format', format));
 
-        // Обновлений пока нет: проверка честно сообщает, что стоит последняя версия.
-        const updateState = h('p', { class: 'set-desc', i18n: 'upd.current' });
+        // Обновление ПО. На BOS 01 ждёт BOS 02: оно ставится только кнопкой «Обновить».
+        // На BOS 02 обновлений нет, но можно вернуться на BOS 01, чтобы обновиться снова.
+        const product = BOS.mobile ? 'BOS MOBILE' : 'BOS';
+        const updateState = h('p', { class: 'set-desc', i18n: BOS.is02 ? 'upd.current' : 'upd.found' });
         const checkButton = h('button', {
           type: 'button',
           class: 'btn outline',
@@ -166,18 +168,74 @@
             BOS.applyI18nTo(updateState);
             setTimeout(() => {
               checkButton.disabled = false;
-              updateState.dataset.i18n = 'upd.latest';
+              updateState.dataset.i18n = BOS.is02 ? 'upd.latest' : 'upd.found';
               BOS.applyI18nTo(updateState);
+              if (!BOS.is02) offer.hidden = false;
             }, 1400);
           },
         }, BOS.icon('update'), h('span', { i18n: 'upd.check' }));
+
+        const bar = h('i');
+        const stage = h('p', { class: 'set-desc upd-stage', hidden: true });
+        const progress = h('div', { class: 'upd-progress', hidden: true }, bar);
+        function sayStage(key, vars) {
+          stage.hidden = false;
+          stage.dataset.i18n = key;
+          stage.i18nVars = vars;
+          BOS.applyI18nTo(stage);
+        }
+        // Загрузка, установка и перезапуск — как у настоящего обновления.
+        function runUpdate(target) {
+          installButton.disabled = true;
+          checkButton.disabled = true;
+          if (rollbackButton) rollbackButton.disabled = true;
+          progress.hidden = false;
+          const started = Date.now();
+          const LOAD = 3200;
+          const timer = setInterval(() => {
+            const share = Math.min(1, (Date.now() - started) / LOAD);
+            bar.style.width = `${Math.round(share * 100)}%`;
+            sayStage('upd.downloading', { n: Math.round(share * 100) });
+            if (share < 1) return;
+            clearInterval(timer);
+            sayStage('upd.installing');
+            progress.classList.add('busy');
+            setTimeout(() => {
+              sayStage('upd.restarting');
+              BOS.setOs(target);
+              setTimeout(() => {
+                BOS.show(h('div', { class: 'boot' },
+                  mark('mark big'),
+                  h('b', {}, `${product} ${target}`),
+                  h('div', { class: 'boot-line' }, h('i'))));
+                setTimeout(() => location.reload(), 1500);
+              }, 600);
+            }, 1600);
+          }, 80);
+          win.disposers.push(() => clearInterval(timer));
+        }
+        const installButton = h('button', { type: 'button', class: 'btn primary', onclick: () => runUpdate('02') },
+          BOS.icon('download'), h('span', { i18n: 'upd.install' }));
+        const offer = h('div', { class: 'upd-offer' },
+          h('div', { class: 'about update-card' },
+            mark('mark big'),
+            h('div', {}, h('b', {}, `${product} 02`), h('p', { i18n: 'upd.available' }))),
+          h('div', { class: 'upd-new' }, h('b', { i18n: 'upd.new' }), h('p', { class: 'set-desc', i18n: 'upd.notes' })),
+          installButton);
+        const rollbackButton = BOS.is02
+          ? h('button', { type: 'button', class: 'btn ghost upd-back', onclick: () => runUpdate('01') }, BOS.icon('restart'), h('span', { i18n: 'upd.rollback' }))
+          : null;
+
         const update = h('div', { class: 'set-sub', hidden: true },
           h('div', { class: 'about update-card' },
             mark('mark big'),
-            h('div', {}, h('b', {}, `${BOS.mobile ? 'BOS MOBILE' : 'BOS'} ${BOS.VERSION}`), h('p', {}, h('span', { i18n: 'set.version' }), ` ${BOS.VERSION}`))),
-          h('div', { class: 'upd-new' }, h('b', { i18n: 'upd.new' }), h('p', { class: 'set-desc', i18n: 'upd.notes' })),
+            h('div', {}, h('b', {}, `${product} ${BOS.VERSION}`), h('p', {}, h('span', { i18n: 'set.version' }), ` ${BOS.VERSION}`))),
+          BOS.is02 ? h('div', { class: 'upd-new' }, h('b', { i18n: 'upd.new' }), h('p', { class: 'set-desc', i18n: 'upd.notes' })) : null,
           updateState,
-          checkButton);
+          BOS.is02 ? null : offer,
+          progress,
+          stage,
+          h('div', { class: 'sec-actions' }, checkButton, rollbackButton));
 
         // Дата и время: живые часы, формат часов и часовой пояс.
         const nowTime = h('b', { class: 'dt-time' });
@@ -243,7 +301,7 @@
         win.listen('lang', fillKeyboard);
         fillKeyboard();
 
-        const pages = [['set.langRegion', locale], ['set.datetime', datetime], ...(BOS.mobile ? [['set.keyboard', keyboard]] : []), ['set.update', update]];
+        const pages = [['set.langRegion', locale], ['set.datetime', datetime], ...(BOS.mobile && BOS.is02 ? [['set.keyboard', keyboard]] : []), ['set.update', update]];
         const tabs = pages.map(([key, pane]) => h('button', {
           type: 'button',
           class: 'set-tab',

@@ -1018,7 +1018,7 @@ webview.browser-frame { display: flex; }
 .shade-ctl:disabled { opacity: .45; cursor: default; }
 .shade-grip { width: 54px; height: 5px; border-radius: 3px; background: rgba(255,255,255,.85); box-shadow: 0 1px 3px rgba(0,0,0,.3); }
 .desktop .shade-grip { display: none; }
-.m-status { cursor: pointer; touch-action: none; }
+.bos02 .m-status { cursor: pointer; touch-action: none; }
 .island-time-btn { display: inline-flex; align-items: center; height: 38px; padding: 0 8px; border-radius: 999px; color: inherit; font: inherit; transition: background-color .12s; }
 .island-time-btn:hover { background: var(--surface-2); }
 
@@ -1132,3 +1132,30 @@ video.ph-big { background: #000; }
 /* BOS 02: размер мышки */
 .cursor-sizes .seg span { display: grid; place-items: center; width: 52px; height: 52px; padding: 0; }
 .cursor-sizes .seg span svg { width: calc(22px * var(--cur-s, 1)); height: calc(22px * var(--cur-s, 1)); filter: drop-shadow(0 1px 1px rgba(0,0,0,.35)); }
+
+/* BOS 01: старая стрелка (до обновления на BOS 02) */
+.cursor.v1 .cursor-arrow { left: 0; top: 0; width: 16px; height: 26px; transform-origin: 0 0; filter: drop-shadow(0 1px 1.5px rgba(0,0,0,.5)); }
+.cursor.v1 .cursor-outline, .cursor.v1 .cursor-fill { position: absolute; inset: 0; }
+.cursor.v1 .cursor-outline { background: #fff; clip-path: polygon(0 0, 0 21.6px, 4.9px 17px, 8.4px 25.1px, 11.7px 23.7px, 8.3px 15.8px, 14.9px 15.8px); }
+.cursor.v1 .cursor-fill { overflow: hidden; clip-path: polygon(1.7px 4.3px, 1.7px 17.6px, 5.6px 13.9px, 9.2px 22.2px, 10.4px 21.7px, 6.9px 14.1px, 10.9px 14.1px); }
+.cursor.v1 .cursor-fill::before, .cursor.v1 .cursor-beam::before {
+  content: ""; position: absolute; left: 50%; top: 50%; width: 44px; height: 44px; margin: -22px;
+  background: conic-gradient(#ff3b30, #ff9500, #ffcc00, #34c759, #00c7be, #007aff, #af52de, #ff2d92, #ff3b30);
+  animation: cursor-spin 2.4s linear infinite;
+}
+@media (prefers-reduced-motion: reduce) { .cursor.v1 .cursor-fill::before, .cursor.v1 .cursor-beam::before { animation: none; } }
+
+/* BOS 01: часы на острове видны, только когда открыто приложение */
+html:not(.bos02) .island-time { display: none; }
+html:not(.bos02) .island.busy .island-time { display: block; }
+
+/* Обновление ПО: предложение BOS 02 и полоска загрузки */
+.upd-offer { display: flex; flex-direction: column; gap: 10px; margin: 6px 0 14px; padding: 14px; border: 1px solid var(--line); border-radius: 18px; }
+.upd-offer .update-card { margin: 0; }
+.upd-offer .upd-new { margin: 0; }
+.upd-offer .btn.primary { align-self: flex-start; }
+.upd-progress { height: 8px; margin: 6px 0 4px; overflow: hidden; border-radius: 4px; background: var(--surface-3); }
+.upd-progress i { display: block; width: 0; height: 100%; border-radius: 4px; background: var(--accent); transition: width .08s linear; }
+.upd-progress.busy i { width: 100% !important; background: linear-gradient(90deg, var(--accent), #22d3ee, var(--accent)); background-size: 200% 100%; animation: upd-busy 1s linear infinite; }
+@keyframes upd-busy { to { background-position: -200% 0; } }
+.upd-stage { font-variant-numeric: tabular-nums; }

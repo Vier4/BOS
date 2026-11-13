@@ -150,7 +150,8 @@
     plain: () => '',
   };
 
-  BOS.WALLPAPERS = Object.keys(PAINTERS);
+  // Обои BOS 02 появляются только после обновления.
+  BOS.WALLPAPERS = Object.keys(PAINTERS).filter((id) => BOS.is02 || id !== 'bos02');
   BOS.wallpaperSvg = (id, mini = false) => (id === 'bos02' ? bos02(!mini && (BOS.mobile || innerHeight > innerWidth)) : svg(PAINTERS[id](mini)));
 
   // Слой обоев для рабочего стола и BOS MOBILE: сам следит за выбором в настройках.
@@ -160,7 +161,7 @@
       const photo = BOS.state.wallpaper === 'photo' && BOS.getPhoto();
       wall.className = photo ? 'wall photo' : 'wall';
       if (photo) wall.replaceChildren(BOS.h('img', { src: photo, alt: '' }));
-      else wall.innerHTML = BOS.wallpaperSvg(BOS.state.wallpaper === 'photo' ? 'bos02' : BOS.state.wallpaper);
+      else wall.innerHTML = BOS.wallpaperSvg(BOS.state.wallpaper === 'photo' || !BOS.WALLPAPERS.includes(BOS.state.wallpaper) ? (BOS.is02 ? 'bos02' : 'leaf') : BOS.state.wallpaper);
     }
     BOS.on('wallpaper', sync);
     // Обои BOS 02 перерисовываются, когда экран поворачивается из альбомного в книжный и обратно.

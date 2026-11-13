@@ -10,11 +10,17 @@
     ['textarea, .term, input:not([type="radio"]):not([type="checkbox"]):not([type="color"]):not([type="range"])', 'text'],
   ];
 
-  const cursor = BOS.h('div', { class: 'cursor', hidden: true, 'aria-hidden': 'true' },
-    BOS.h('div', { class: 'cursor-arrow' }),
-    BOS.h('div', { class: 'cursor-beam' }));
+  // BOS 01: стрелка с белой обводкой и переливающейся заливкой. BOS 02: мышки на выбор.
+  const cursor = BOS.is02
+    ? BOS.h('div', { class: 'cursor', hidden: true, 'aria-hidden': 'true' },
+      BOS.h('div', { class: 'cursor-arrow' }),
+      BOS.h('div', { class: 'cursor-beam' }))
+    : BOS.h('div', { class: 'cursor v1', hidden: true, 'aria-hidden': 'true' },
+      BOS.h('div', { class: 'cursor-arrow' }, BOS.h('i', { class: 'cursor-outline' }), BOS.h('i', { class: 'cursor-fill' })),
+      BOS.h('div', { class: 'cursor-beam' }));
   const arrow = cursor.firstChild;
   function paint() {
+    if (!BOS.is02) return;
     const id = BOS.CURSORS[BOS.state.cursor] ? BOS.state.cursor : 'aurora';
     arrow.innerHTML = BOS.cursorSvg(id);
     cursor.style.setProperty('--cur-a', BOS.CURSORS[id].a);

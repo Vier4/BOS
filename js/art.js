@@ -156,6 +156,24 @@
       <rect x="14" y="34" width="16" height="16" rx="5" fill="#22c55e"/><rect x="34" y="34" width="16" height="16" rx="5" fill="#a855f7"/>`,
   };
 
+  // В BOS 01 у Настроек, Браузера и Помощника старые логотипы.
+  if (!BOS.is02) Object.assign(ART, {
+    settings: `<rect width="64" height="64" fill="url(#bos-art-settings)"/>
+      <path d="M15 20h34M15 32h34M15 44h34" stroke="#fff" stroke-opacity=".55" stroke-width="4" stroke-linecap="round"/>
+      <circle cx="38" cy="20" r="6.5" fill="#fde047" stroke="#fff" stroke-width="2.5"/>
+      <circle cx="24" cy="32" r="6.5" fill="#67e8f9" stroke="#fff" stroke-width="2.5"/>
+      <circle cx="42" cy="44" r="6.5" fill="#a7f3d0" stroke="#fff" stroke-width="2.5"/>`,
+    browser: `<rect width="64" height="64" fill="url(#bos-art-browser)"/>
+      <circle cx="32" cy="32" r="19" fill="url(#bos-art-globe)"/>
+      <path d="M24 21c4 1 6 4 5 7s-5 3-6 6 1 6-1 9c-3-2-7-7-7-12 0-4 4-9 9-10zM39 17c5 2 9 7 10 12-3 0-5-2-7-1s-2 5-5 5-3-4-2-7 4-4 4-9z" fill="#4ade80" fill-opacity=".92"/>
+      <ellipse cx="32" cy="32" rx="27" ry="9" fill="none" stroke="#f97316" stroke-width="3" transform="rotate(-24 32 32)"/>
+      <circle cx="56.5" cy="21" r="3.5" fill="#facc15"/>`,
+    assistant: `<rect width="64" height="64" fill="url(#bos-art-assistant)"/>
+      <path d="M14 18a6 6 0 0 1 6-6h24a6 6 0 0 1 6 6v18a6 6 0 0 1-6 6H29l-9 8v-8a6 6 0 0 1-6-6z" fill="#fff"/>
+      <path d="M32 16c.9 5.6 3.4 8.1 9 9-5.6.9-8.1 3.4-9 9-.9-5.6-3.4-8.1-9-9 5.6-.9 8.1-3.4 9-9z" fill="#8b5cf6"/>
+      <circle cx="43" cy="17.5" r="2.2" fill="#22d3ee"/><circle cx="21" cy="34" r="1.6" fill="#f472b6"/>`,
+  });
+
   BOS.artTile = (key, className = '') => BOS.h('span', {
     class: `tile ${className}`,
     html: `<svg viewBox="0 0 64 64" aria-hidden="true">${ART[key]}</svg>`,

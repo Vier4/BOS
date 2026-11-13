@@ -864,3 +864,142 @@ BOS.addStrings({
     "set.cursorSize": "포인터 크기"
   }
 });
+
+// Обновление с BOS 01 на BOS 02 и возврат.
+BOS.addStrings({
+  "ru": {
+    "upd.found": "Доступно обновление BOS 02.",
+    "upd.available": "Новая версия системы",
+    "upd.install": "Обновить",
+    "upd.downloading": "Загрузка… {n}%",
+    "upd.installing": "Установка…",
+    "upd.restarting": "Перезапуск…",
+    "upd.rollback": "Вернуться на BOS 01"
+  },
+  "en": {
+    "upd.found": "BOS 02 is available.",
+    "upd.available": "New system version",
+    "upd.install": "Update",
+    "upd.downloading": "Downloading… {n}%",
+    "upd.installing": "Installing…",
+    "upd.restarting": "Restarting…",
+    "upd.rollback": "Go back to BOS 01"
+  },
+  "uk": {
+    "upd.found": "Доступне оновлення BOS 02.",
+    "upd.available": "Нова версія системи",
+    "upd.install": "Оновити",
+    "upd.downloading": "Завантаження… {n}%",
+    "upd.installing": "Встановлення…",
+    "upd.restarting": "Перезапуск…",
+    "upd.rollback": "Повернутися до BOS 01"
+  },
+  "de": {
+    "upd.found": "BOS 02 ist verfügbar.",
+    "upd.available": "Neue Systemversion",
+    "upd.install": "Aktualisieren",
+    "upd.downloading": "Wird geladen… {n} %",
+    "upd.installing": "Wird installiert…",
+    "upd.restarting": "Neustart…",
+    "upd.rollback": "Zurück zu BOS 01"
+  },
+  "es": {
+    "upd.found": "BOS 02 está disponible.",
+    "upd.available": "Nueva versión del sistema",
+    "upd.install": "Actualizar",
+    "upd.downloading": "Descargando… {n} %",
+    "upd.installing": "Instalando…",
+    "upd.restarting": "Reiniciando…",
+    "upd.rollback": "Volver a BOS 01"
+  },
+  "fr": {
+    "upd.found": "BOS 02 est disponible.",
+    "upd.available": "Nouvelle version du système",
+    "upd.install": "Mettre à jour",
+    "upd.downloading": "Téléchargement… {n} %",
+    "upd.installing": "Installation…",
+    "upd.restarting": "Redémarrage…",
+    "upd.rollback": "Revenir à BOS 01"
+  },
+  "it": {
+    "upd.found": "BOS 02 è disponibile.",
+    "upd.available": "Nuova versione del sistema",
+    "upd.install": "Aggiorna",
+    "upd.downloading": "Download… {n}%",
+    "upd.installing": "Installazione…",
+    "upd.restarting": "Riavvio…",
+    "upd.rollback": "Torna a BOS 01"
+  },
+  "pt": {
+    "upd.found": "O BOS 02 está disponível.",
+    "upd.available": "Nova versão do sistema",
+    "upd.install": "Atualizar",
+    "upd.downloading": "Baixando… {n}%",
+    "upd.installing": "Instalando…",
+    "upd.restarting": "Reiniciando…",
+    "upd.rollback": "Voltar para o BOS 01"
+  },
+  "pl": {
+    "upd.found": "Dostępna jest aktualizacja BOS 02.",
+    "upd.available": "Nowa wersja systemu",
+    "upd.install": "Aktualizuj",
+    "upd.downloading": "Pobieranie… {n}%",
+    "upd.installing": "Instalowanie…",
+    "upd.restarting": "Ponowne uruchamianie…",
+    "upd.rollback": "Wróć do BOS 01"
+  },
+  "nl": {
+    "upd.found": "BOS 02 is beschikbaar.",
+    "upd.available": "Nieuwe systeemversie",
+    "upd.install": "Bijwerken",
+    "upd.downloading": "Downloaden… {n}%",
+    "upd.installing": "Installeren…",
+    "upd.restarting": "Opnieuw opstarten…",
+    "upd.rollback": "Terug naar BOS 01"
+  },
+  "tr": {
+    "upd.found": "BOS 02 güncellemesi hazır.",
+    "upd.available": "Yeni sistem sürümü",
+    "upd.install": "Güncelle",
+    "upd.downloading": "İndiriliyor… %{n}",
+    "upd.installing": "Yükleniyor…",
+    "upd.restarting": "Yeniden başlatılıyor…",
+    "upd.rollback": "BOS 01’e geri dön"
+  },
+  "kk": {
+    "upd.found": "BOS 02 жаңартуы қолжетімді.",
+    "upd.available": "Жүйенің жаңа нұсқасы",
+    "upd.install": "Жаңарту",
+    "upd.downloading": "Жүктелуде… {n}%",
+    "upd.installing": "Орнатылуда…",
+    "upd.restarting": "Қайта іске қосылуда…",
+    "upd.rollback": "BOS 01-ге оралу"
+  },
+  "zh": {
+    "upd.found": "BOS 02 现已推出。",
+    "upd.available": "新的系统版本",
+    "upd.install": "更新",
+    "upd.downloading": "正在下载… {n}%",
+    "upd.installing": "正在安装…",
+    "upd.restarting": "正在重启…",
+    "upd.rollback": "返回 BOS 01"
+  },
+  "ja": {
+    "upd.found": "BOS 02 が利用できます。",
+    "upd.available": "新しいシステムバージョン",
+    "upd.install": "アップデート",
+    "upd.downloading": "ダウンロード中… {n}%",
+    "upd.installing": "インストール中…",
+    "upd.restarting": "再起動中…",
+    "upd.rollback": "BOS 01 に戻す"
+  },
+  "ko": {
+    "upd.found": "BOS 02 업데이트가 있습니다.",
+    "upd.available": "새 시스템 버전",
+    "upd.install": "업데이트",
+    "upd.downloading": "다운로드 중… {n}%",
+    "upd.installing": "설치 중…",
+    "upd.restarting": "다시 시작하는 중…",
+    "upd.rollback": "BOS 01로 돌아가기"
+  }
+});
