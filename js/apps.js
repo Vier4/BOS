@@ -64,7 +64,19 @@
           input,
           h('span', { style: `font-size:${GLYPH_PX[input.value]}px` }, 'A'))));
 
+        // Мышка BOS 02: на телефоне её нет, поэтому и выбора нет.
+        const cursorInputs = Object.keys(BOS.CURSORS).map((id) => h('input', {
+          type: 'radio', name: 'set-cursor', value: id,
+          onchange: () => BOS.setCursor(id),
+        }));
+        const syncCursor = () => cursorInputs.forEach((input) => { input.checked = input.value === state.cursor; });
+        win.listen('cursor', syncCursor);
+        syncCursor();
+        const cursors = h('div', { class: 'cursor-picks', role: 'radiogroup' }, cursorInputs.map((input) =>
+          h('label', { class: 'cursor-pick', title: input.value }, input, h('span', { html: BOS.cursorSvg(input.value) }))));
+
         return [
+          BOS.mobile ? null : row('set.cursor', cursors),
           row('set.textSize', sizes),
           row('set.theme', h('div', { class: 'segs' },
             h('label', { class: 'seg' }, inputs[0], h('span', { i18n: 'theme.light' })),
@@ -146,6 +158,7 @@
           h('div', { class: 'about update-card' },
             mark('mark big'),
             h('div', {}, h('b', {}, `${BOS.mobile ? 'BOS MOBILE' : 'BOS'} ${BOS.VERSION}`), h('p', {}, h('span', { i18n: 'set.version' }), ` ${BOS.VERSION}`))),
+          h('div', { class: 'upd-new' }, h('b', { i18n: 'upd.new' }), h('p', { class: 'set-desc', i18n: 'upd.notes' })),
           updateState,
           checkButton);
 
@@ -496,7 +509,7 @@
         whoami: () => print(BOS.accountLabel()),
         date: () => print(BOS.fmtLong(new Date())),
         echo: (args) => print(args.join(' ')),
-        uname: () => print('BOS 1.0'),
+        uname: () => print(`BOS ${BOS.VERSION}`),
         clear: () => output.replaceChildren(),
         theme: ([value]) => {
           if (value === 'light' || value === 'dark') BOS.setTheme(value);

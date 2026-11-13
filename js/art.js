@@ -21,28 +21,68 @@
     gradient('assistant', '#22d3ee', '#8b5cf6'),
     gradient('deskfolder', '#7dd3fc', '#3b82f6', 0, 1),
     gradient('all', '#f8fafc', '#cbd5e1'),
+    // BOS 02: новые логотипы.
+    '<linearGradient id="bos-art-browser2" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#8b5cf6"/><stop offset=".5" stop-color="#3b82f6"/><stop offset="1" stop-color="#10b981"/></linearGradient>',
+    '<radialGradient id="bos-art-planet" cx=".35" cy=".3" r=".8"><stop offset="0" stop-color="#3730a3"/><stop offset="1" stop-color="#0b0b3b"/></radialGradient>',
+    gradient('assistant2', '#a855f7', '#22d3ee'),
+    '<radialGradient id="bos-art-spark" cx=".5" cy=".5" r=".5"><stop offset=".15" stop-color="#fde047"/><stop offset=".55" stop-color="#38bdf8"/><stop offset="1" stop-color="#1d4ed8"/></radialGradient>',
+    gradient('settings2', '#e2e8f0', '#94a3b8', 0, 1),
+    gradient('gear', '#6366f1', '#2563eb'),
+    gradient('camera', '#2a2a2e', '#050506', 0, 1),
+    '<radialGradient id="bos-art-lens" cx=".4" cy=".35" r=".7"><stop offset="0" stop-color="#4b5563"/><stop offset="1" stop-color="#050506"/></radialGradient>',
+    '<linearGradient id="bos-art-photos" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#9333ea"/><stop offset=".55" stop-color="#f97316"/><stop offset="1" stop-color="#facc15"/></linearGradient>',
+    gradient('photos-green', '#bef264', '#65a30d', 0, 1),
+    gradient('photos-red', '#ef4444', '#f97316', 1, 1),
+    gradient('photos-blue', '#22d3ee', '#2563eb', 0, 1),
+    // Мышки BOS 02.
+    gradient('cur-aurora', '#38bdf8', '#a855f7', 0, 1),
+    '<linearGradient id="bos-art-cur-sunset" x1="1" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#8b5cf6"/><stop offset=".5" stop-color="#f472b6"/><stop offset="1" stop-color="#f97316"/></linearGradient>',
+    gradient('cur-night', '#4f46e5', '#0f0b3d', 1, 1),
+    '<linearGradient id="bos-art-cur-lagoon" x1="1" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#7c3aed"/><stop offset=".5" stop-color="#2563eb"/><stop offset="1" stop-color="#34d399"/></linearGradient>',
   ].join('');
+
+  // Четырёхлучевая звёздочка: так нарисованы искры на новых логотипах.
+  const star = (cx, cy, r, fill) =>
+    `<path d="M${cx} ${cy - r}Q${cx} ${cy} ${cx + r} ${cy}Q${cx} ${cy} ${cx} ${cy + r}Q${cx} ${cy} ${cx - r} ${cy}Q${cx} ${cy} ${cx} ${cy - r}Z" fill="${fill}"/>`;
+
+  // Шестерёнка с зубцами для логотипа Настроек.
+  function gear(cx, cy, outer, inner, teeth) {
+    let d = '';
+    for (let i = 0; i < teeth * 2; i++) {
+      const r = i % 2 ? inner : outer;
+      const a0 = ((i - 0.5) / (teeth * 2)) * Math.PI * 2;
+      const a1 = ((i + 0.5) / (teeth * 2)) * Math.PI * 2;
+      d += `${i ? 'L' : 'M'}${(cx + r * Math.cos(a0)).toFixed(1)} ${(cy + r * Math.sin(a0)).toFixed(1)}L${(cx + r * Math.cos(a1)).toFixed(1)} ${(cy + r * Math.sin(a1)).toFixed(1)}`;
+    }
+    return d + 'Z';
+  }
 
   const defs = document.createElement('div');
   defs.innerHTML = `<svg class="art-defs" aria-hidden="true" focusable="false"><defs>${DEFS}</defs></svg>`;
   document.body.prepend(defs.firstChild);
 
   const ART = {
-    settings: `<rect width="64" height="64" fill="url(#bos-art-settings)"/>
-      <path d="M15 20h34M15 32h34M15 44h34" stroke="#fff" stroke-opacity=".55" stroke-width="4" stroke-linecap="round"/>
-      <circle cx="38" cy="20" r="6.5" fill="#fde047" stroke="#fff" stroke-width="2.5"/>
-      <circle cx="24" cy="32" r="6.5" fill="#67e8f9" stroke="#fff" stroke-width="2.5"/>
-      <circle cx="42" cy="44" r="6.5" fill="#a7f3d0" stroke="#fff" stroke-width="2.5"/>`,
+    settings: `<rect width="64" height="64" fill="url(#bos-art-settings2)"/>
+      <path d="${gear(32, 32, 25, 20, 10)}" fill="url(#bos-art-gear)" stroke="#1e3a8a" stroke-width="1.5" stroke-linejoin="round"/>
+      <circle cx="32" cy="32" r="14" fill="#93c5fd"/>
+      <g fill="#1e1b4b">${[0, 1, 2, 3, 4, 5, 6, 7, 8, 9].map((i) => {
+        const a = (i / 10) * Math.PI * 2;
+        return `<circle cx="${(32 + 17.5 * Math.cos(a)).toFixed(1)}" cy="${(32 + 17.5 * Math.sin(a)).toFixed(1)}" r="1.6"/>`;
+      }).join('')}</g>
+      <path d="M22 42l14-14" stroke="#eef2ff" stroke-width="6" stroke-linecap="round"/>
+      <circle cx="38.5" cy="25.5" r="7" fill="#eef2ff"/>
+      <path d="M40 18.5l5.5 5.5-3.5 3.5-5.5-5.5z" fill="#93c5fd"/>`,
     files: `<rect width="64" height="64" fill="url(#bos-art-files)"/>
       <path d="M11 21a4 4 0 0 1 4-4h11l4.5 5H49a4 4 0 0 1 4 4v20a4 4 0 0 1-4 4H15a4 4 0 0 1-4-4z" fill="#1d4ed8"/>
       <rect x="17" y="21" width="31" height="20" rx="2" fill="#fff" transform="rotate(-5 32 31)"/>
       <path d="M11 29a4 4 0 0 1 4-4h34a4 4 0 0 1 4 4v17a4 4 0 0 1-4 4H15a4 4 0 0 1-4-4z" fill="url(#bos-art-folder)"/>
       <path d="M23 38h18" stroke="#fff" stroke-opacity=".75" stroke-width="3" stroke-linecap="round"/>`,
-    browser: `<rect width="64" height="64" fill="url(#bos-art-browser)"/>
-      <circle cx="32" cy="32" r="19" fill="url(#bos-art-globe)"/>
-      <path d="M24 21c4 1 6 4 5 7s-5 3-6 6 1 6-1 9c-3-2-7-7-7-12 0-4 4-9 9-10zM39 17c5 2 9 7 10 12-3 0-5-2-7-1s-2 5-5 5-3-4-2-7 4-4 4-9z" fill="#4ade80" fill-opacity=".92"/>
-      <ellipse cx="32" cy="32" rx="27" ry="9" fill="none" stroke="#f97316" stroke-width="3" transform="rotate(-24 32 32)"/>
-      <circle cx="56.5" cy="21" r="3.5" fill="#facc15"/>`,
+    browser: `<rect width="64" height="64" fill="url(#bos-art-browser2)"/>
+      <path d="M6 35A26 8 0 0 1 58 35" fill="none" stroke="#f5ecd0" stroke-width="4" transform="rotate(-10 32 34)"/>
+      <circle cx="32" cy="32" r="16" fill="url(#bos-art-planet)"/>
+      <path d="M6 35A26 8 0 0 0 58 35" fill="none" stroke="#f5ecd0" stroke-width="4" transform="rotate(-10 32 34)"/>
+      <path d="M6 35A26 8 0 0 0 58 35" fill="none" stroke="#a8a29e" stroke-width="1.2" transform="rotate(-10 32 34) translate(0 1.6)"/>
+      ${star(37, 24, 5, '#fde047')}${star(30, 40, 4, '#fde047')}${star(11, 11, 6, '#fde047')}${star(54, 10, 4, '#fde047')}${star(12, 53, 4.5, '#fde047')}${star(53, 53, 5, '#fde047')}`,
     notes: `<rect width="64" height="64" fill="url(#bos-art-notes)"/>
       <rect x="15" y="11" width="34" height="43" rx="5" fill="#fff" stroke="#f5d58a" stroke-width="1.5"/>
       <path d="M15 16a5 5 0 0 1 5-5h24a5 5 0 0 1 5 5v5H15z" fill="#f59e0b"/>
@@ -90,10 +130,24 @@
       <path d="M17 20.6l5 5.4M27 18.4l5 5.4M37 16.1l5 5.4" stroke="#1f1235" stroke-width="3"/>
       <path d="M28 30v14l12-7z" fill="#fff"/>
       <path d="M15 48h8M41 48h8" stroke="#f9a8d4" stroke-width="2.5" stroke-linecap="round"/>`,
-    assistant: `<rect width="64" height="64" fill="url(#bos-art-assistant)"/>
-      <path d="M14 18a6 6 0 0 1 6-6h24a6 6 0 0 1 6 6v18a6 6 0 0 1-6 6H29l-9 8v-8a6 6 0 0 1-6-6z" fill="#fff"/>
-      <path d="M32 16c.9 5.6 3.4 8.1 9 9-5.6.9-8.1 3.4-9 9-.9-5.6-3.4-8.1-9-9 5.6-.9 8.1-3.4 9-9z" fill="#8b5cf6"/>
-      <circle cx="43" cy="17.5" r="2.2" fill="#22d3ee"/><circle cx="21" cy="34" r="1.6" fill="#f472b6"/>`,
+    assistant: `<rect width="64" height="64" fill="url(#bos-art-assistant2)"/>
+      <path d="M32 9C33.5 25 37 30.5 54 33 37 35.5 33.5 41 32 57 30.5 41 27 35.5 10 33 27 30.5 30.5 25 32 9z" fill="url(#bos-art-spark)"/>
+      ${star(47, 16, 5.5, '#67e8f9')}${star(17, 48, 3.5, '#67e8f9')}${star(16, 18, 2.5, '#e0f2fe')}
+      <circle cx="50" cy="47" r="1.6" fill="#e0f2fe"/>`,
+    camera: `<rect width="64" height="64" fill="url(#bos-art-camera)"/>
+      <circle cx="30" cy="35" r="22" fill="#18181b" stroke="#52525b" stroke-width="2"/>
+      <circle cx="30" cy="35" r="17" fill="url(#bos-art-lens)"/>
+      <circle cx="30" cy="35" r="13" fill="none" stroke="#a1a1aa" stroke-width="1.5"/>
+      <circle cx="30" cy="35" r="9" fill="none" stroke="#71717a" stroke-width="2"/>
+      <circle cx="30" cy="35" r="5" fill="#09090b"/>
+      ${star(24, 29, 9, '#ffffff')}
+      <rect x="47" y="4" width="10" height="10" rx="2.5" fill="#22c55e"/>
+      <rect x="44" y="9" width="10" height="10" rx="2.5" fill="#ef4444"/>
+      <rect x="41" y="15" width="9" height="9" rx="2.5" fill="#3b82f6"/>`,
+    photos: `<rect width="64" height="64" fill="url(#bos-art-photos)"/>
+      <rect x="11" y="10" width="45" height="24" rx="12" fill="url(#bos-art-photos-green)"/>
+      <rect x="8" y="27" width="38" height="25" rx="12.5" fill="url(#bos-art-photos-red)"/>
+      <ellipse cx="17" cy="50" rx="10" ry="7" fill="url(#bos-art-photos-blue)"/>`,
     folder: `<path d="M6 16a5 5 0 0 1 5-5h14l5 6h23a5 5 0 0 1 5 5v26a5 5 0 0 1-5 5H11a5 5 0 0 1-5-5z" fill="#2563eb"/>
       <path d="M6 25a5 5 0 0 1 5-5h42a5 5 0 0 1 5 5v23a5 5 0 0 1-5 5H11a5 5 0 0 1-5-5z" fill="url(#bos-art-deskfolder)"/>
       <path d="M14 27h36" stroke="#fff" stroke-opacity=".45" stroke-width="2.5" stroke-linecap="round"/>`,
@@ -107,4 +161,13 @@
     html: `<svg viewBox="0 0 64 64" aria-hidden="true">${ART[key]}</svg>`,
   });
   BOS.appTile = BOS.artTile;
+
+  // Мышки BOS 02. Первая — та, что стоит по умолчанию.
+  BOS.CURSORS = {
+    aurora: { line: '#e5e7eb', a: '#38bdf8', b: '#a855f7' },
+    sunset: { line: '#e5e7eb', a: '#8b5cf6', b: '#f97316' },
+    night: { line: '#09090b', a: '#4f46e5', b: '#0f0b3d' },
+    lagoon: { line: '#09090b', a: '#7c3aed', b: '#34d399' },
+  };
+  BOS.cursorSvg = (id) => `<svg viewBox="0 0 28 28" aria-hidden="true"><path d="M3 3L24 11.4Q25.6 12.1 24 12.9L15.6 15.6 12.9 24Q12.1 25.6 11.4 24z" fill="url(#bos-art-cur-${id})" stroke="${BOS.CURSORS[id].line}" stroke-width="2.4" stroke-linejoin="round" paint-order="stroke"/></svg>`;
 })();

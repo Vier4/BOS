@@ -116,6 +116,11 @@ BOS.runMobile = function () {
     library.hidden = !isOpen;
   }
 
+  // Верхняя шторка: смахните вниз по строке состояния.
+  const shade = BOS.createShade();
+  const statusBar = h('header', { class: 'm-status' }, statusTime, h('span', { class: 'm-status-right' }, planeMark, h('span', {}, 'BOS 02')));
+  shade.attachHandle(statusBar);
+
   // Полоска внизу — кнопка «Домой»: сворачивает приложения и показывает главный экран.
   const homeBar = h('button', {
     type: 'button',
@@ -123,6 +128,7 @@ BOS.runMobile = function () {
     i18nTitle: 'mobile.home',
     onclick: () => {
       toggleLibrary(false);
+      shade.close();
       homeEdit.stop();
       wm.hideAll();
     },
@@ -141,12 +147,25 @@ BOS.runMobile = function () {
     homeEdit.stop();
   });
 
-  BOS.show(h('div', { class: 'mobile enter-fade' },
+  // Камера и Фото появились в BOS 02: один раз кладём их на главный экран.
+  if (!state.home02) {
+    state.home02 = true;
+    BOS.MOBILE_APPS.forEach((id) => { if (!state.home.includes(id)) state.home.push(id); });
+    BOS.save();
+    syncGrid();
+  }
+
+  const root = h('div', { class: 'mobile enter-fade' });
+  const keyboard = BOS.createKeyboard(root);
+  root.append(
     BOS.createWall(),
-    h('header', { class: 'm-status' }, statusTime, h('span', { class: 'm-status-right' }, planeMark, h('span', {}, 'BOS'))),
+    statusBar,
     homeMain,
     dock,
     homeBar,
     layer,
-    library));
+    library,
+    shade.el,
+    keyboard.el);
+  BOS.show(root);
 };

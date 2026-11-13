@@ -1,4 +1,4 @@
-// Курсор BOS: стрелка с белой обводкой и переливающейся разноцветной заливкой.
+// Курсор BOS 02: мышка-треугольник с градиентом. Вид выбирается в Настройках → Оформление.
 // В тексте он становится тонкой чертой, на краях окна — полоской для изменения размера.
 (function () {
   if (!window.matchMedia('(hover: hover) and (pointer: fine)').matches) return;
@@ -11,8 +11,17 @@
   ];
 
   const cursor = BOS.h('div', { class: 'cursor', hidden: true, 'aria-hidden': 'true' },
-    BOS.h('div', { class: 'cursor-arrow' }, BOS.h('i', { class: 'cursor-outline' }), BOS.h('i', { class: 'cursor-fill' })),
+    BOS.h('div', { class: 'cursor-arrow' }),
     BOS.h('div', { class: 'cursor-beam' }));
+  const arrow = cursor.firstChild;
+  function paint() {
+    const id = BOS.CURSORS[BOS.state.cursor] ? BOS.state.cursor : 'aurora';
+    arrow.innerHTML = BOS.cursorSvg(id);
+    cursor.style.setProperty('--cur-a', BOS.CURSORS[id].a);
+    cursor.style.setProperty('--cur-b', BOS.CURSORS[id].b);
+  }
+  BOS.on('cursor', paint);
+  paint();
   document.body.append(cursor);
   document.documentElement.classList.add('bos-cursor');
 

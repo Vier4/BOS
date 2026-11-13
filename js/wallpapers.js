@@ -46,7 +46,44 @@
   }
   let gradientId = 0;
 
+  // Обои BOS 02: цвета меняются вместе с темой (светлая — бирюза и солнце, тёмная — фиолетовый и изумруд).
+  // На телефоне рисуются в книжной ориентации, чтобы надпись и ромбы не обрезались.
+  function gem(x, y, size) {
+    const r = size / 2;
+    const c = size * 0.12;
+    return `<path class="b2-gem" d="M${x} ${y - r + c}Q${x} ${y - r} ${x + c} ${y - r + c}L${x + r - c} ${y - c}Q${x + r} ${y} ${x + r - c} ${y + c}L${x + c} ${y + r - c}Q${x} ${y + r} ${x - c} ${y + r - c}L${x - r + c} ${y + c}Q${x - r} ${y} ${x - r + c} ${y - c}L${x - c} ${y - r + c}Q${x} ${y - r} ${x} ${y - r + c}Z"/>`;
+  }
+  function bos02(portrait) {
+    const n = ++gradientId;
+    const W = portrait ? 1000 : WIDTH;
+    const H = portrait ? 1600 : HEIGHT;
+    const cx = W / 2;
+    const blobY = portrait ? 560 : 360;
+    const bw = portrait ? 420 : 520;
+    const bh = portrait ? 300 : 250;
+    const text = portrait
+      ? `<text class="b2-text" x="${cx}" y="700" font-size="330">BOS</text><text class="b2-text" x="${cx}" y="1010" font-size="330">02</text>`
+      : `<text class="b2-text" x="${cx}" y="610" font-size="330">BOS 02</text>`;
+    const gy = portrait ? 1150 : 820;
+    const gs = portrait ? 150 : 190;
+    const gems = portrait ? [200, 500, 800] : [330, 800, 1270];
+    return `<svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="xMidYMid slice"><defs>
+        <linearGradient id="b2-bg-${n}" x1="0" y1="0" x2="1" y2="${portrait ? 1 : 0.35}">
+          <stop offset="0" style="stop-color:var(--b2-a)"/><stop offset=".5" style="stop-color:var(--b2-b)"/><stop offset="1" style="stop-color:var(--b2-c)"/>
+        </linearGradient>
+        <filter id="b2-soft-${n}" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur stdDeviation="${portrait ? 14 : 18}"/></filter>
+        <filter id="b2-glow-${n}" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="16"/></filter>
+      </defs>
+      <rect width="${W}" height="${H}" fill="url(#b2-bg-${n})"/>
+      <path class="b2-blob" filter="url(#b2-soft-${n})" d="M${cx} ${blobY - bh}C${cx + 40} ${blobY - 60} ${cx + 90} ${blobY - 20} ${cx + bw} ${blobY}C${cx + 90} ${blobY + 20} ${cx + 40} ${blobY + 60} ${cx} ${blobY + bh}C${cx - 40} ${blobY + 60} ${cx - 90} ${blobY + 20} ${cx - bw} ${blobY}C${cx - 90} ${blobY - 20} ${cx - 40} ${blobY - 60} ${cx} ${blobY - bh}Z"/>
+      ${text}
+      <g class="b2-gem-glow" filter="url(#b2-glow-${n})">${gems.map((x) => gem(x, gy + 14, gs)).join('')}</g>
+      ${gems.map((x) => gem(x, gy, gs)).join('')}
+    </svg>`;
+  }
+
   const PAINTERS = {
+    bos02: () => '',
     leaf() {
       const n = ++gradientId;
       const ids = { sky: `bos-sky-${n}`, lit: `bos-lit-${n}`, shade: `bos-shade-${n}`, sheen: `bos-sheen-${n}`, shadow: `bos-shadow-${n}`, soft: `bos-soft-${n}` };
@@ -114,7 +151,7 @@
   };
 
   BOS.WALLPAPERS = Object.keys(PAINTERS);
-  BOS.wallpaperSvg = (id, mini = false) => svg(PAINTERS[id](mini));
+  BOS.wallpaperSvg = (id, mini = false) => (id === 'bos02' ? bos02(!mini && (BOS.mobile || innerHeight > innerWidth)) : svg(PAINTERS[id](mini)));
 
   // Слой обоев для рабочего стола и BOS MOBILE: сам следит за выбором в настройках.
   BOS.createWall = function () {
@@ -123,9 +160,16 @@
       const photo = BOS.state.wallpaper === 'photo' && BOS.getPhoto();
       wall.className = photo ? 'wall photo' : 'wall';
       if (photo) wall.replaceChildren(BOS.h('img', { src: photo, alt: '' }));
-      else wall.innerHTML = BOS.wallpaperSvg(BOS.state.wallpaper === 'photo' ? 'leaf' : BOS.state.wallpaper);
+      else wall.innerHTML = BOS.wallpaperSvg(BOS.state.wallpaper === 'photo' ? 'bos02' : BOS.state.wallpaper);
     }
     BOS.on('wallpaper', sync);
+    // Обои BOS 02 перерисовываются, когда экран поворачивается из альбомного в книжный и обратно.
+    let portrait = innerHeight > innerWidth;
+    window.addEventListener('resize', () => {
+      if (portrait === innerHeight > innerWidth) return;
+      portrait = !portrait;
+      if (BOS.state.wallpaper === 'bos02') sync();
+    });
     sync();
     return wall;
   };

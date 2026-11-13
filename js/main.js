@@ -16,6 +16,7 @@
   document.documentElement.lang = state.lang;
   BOS.applyTextColor();
   BOS.applyTextSize();
+  BOS.applyBrightness();
 
   BOS.show(h('div', { class: 'boot' },
     mark('mark big'),

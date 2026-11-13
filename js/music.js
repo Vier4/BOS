@@ -478,8 +478,8 @@
         repeatButton.classList.toggle('active', repeat);
       });
       const volume = h('input', {
-        type: 'range', class: 'music-volume', min: 0, max: 100, value: 80,
-        oninput: () => synth.setVolume(volume.value / 100),
+        type: 'range', class: 'music-volume', min: 0, max: 100, value: Math.round(state.volume * 100),
+        oninput: () => BOS.setVolume(volume.value / 100),
       });
       volume.setAttribute('aria-label', t('music.volume'));
 
@@ -709,6 +709,7 @@
       }
 
       function paintPlayButton() {
+        BOS.emit('player');
         playButton.replaceChildren(icon(playing ? 'pause' : 'play'));
         playButton.dataset.i18nTitle = playing ? 'music.pause' : 'music.play';
         BOS.applyI18nTo(playButton);
@@ -737,6 +738,7 @@
         if (row) row.scrollIntoView({ block: 'nearest' });
         paintRows();
         paintTime(0);
+        BOS.emit('player');
       }
 
       function start(from) {
@@ -833,6 +835,26 @@
         cancelAnimationFrame(frame);
         records.close();
         synth.close();
+      });
+
+      // Громкость общая для всей системы: её меняет и плеер, и верхняя шторка.
+      synth.setVolume(state.volume);
+      win.listen('volume', () => {
+        synth.setVolume(state.volume);
+        if (document.activeElement !== volume) volume.value = Math.round(state.volume * 100);
+      });
+
+      // Верхняя шторка управляет плеером через BOS.player.
+      BOS.player = {
+        toggle,
+        next: () => next(false),
+        previous,
+        playing: () => playing,
+        title: () => (currentId === null ? '' : currentItem().title),
+      };
+      win.disposers.push(() => {
+        BOS.player = null;
+        BOS.emit('player');
       });
 
       paintPlayButton();

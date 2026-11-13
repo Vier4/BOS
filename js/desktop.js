@@ -327,11 +327,15 @@ BOS.runDesktop = function () {
   syncClock();
   setInterval(syncClock, 1000);
 
+  // Верхняя шторка BOS 02 открывается по часам на острове.
+  const shade = BOS.createShade();
+  const timeButton = h('button', { type: 'button', class: 'island-time-btn', i18nTitle: 'shade.title', onclick: () => shade.toggle() }, smallTime);
+
   const island = h('header', { class: 'island' },
     home,
     running,
     h('div', { class: 'island-tray' },
-      smallTime,
+      timeButton,
       langCode,
       airplane,
       h('button', {
@@ -372,5 +376,5 @@ BOS.runDesktop = function () {
     homeEdit.stop();
   });
 
-  BOS.show(h('div', { class: 'desktop enter-fade' }, BOS.createWall(), island, area, launcher));
+  BOS.show(h('div', { class: 'desktop enter-fade' }, BOS.createWall(), island, area, launcher, shade.el));
 };

@@ -23,15 +23,16 @@ window.BOS = (function () {
   const state = Object.assign(
     {
       setupDone: false, lang: 'ru', region: null, theme: 'light', font: 'system', id: null, name: '', notes: '',
-      wallpaper: 'leaf', wallpaperPicked: false, textColor: 'auto', airplane: false, best: {},
+      wallpaper: 'bos02', wallpaperPicked: false, textColor: 'auto', airplane: false, best: {},
       home: ['files', 'browser', 'store', 'assistant', 'music', 'notes', 'games'], textSize: 'm', lock: null, guest: false, playlists: [],
       installed: [], removed: [], order: [], deskPos: {}, clock: 'auto', timeZone: null,
+      cursor: 'aurora', volume: 0.8, brightness: 1,
     },
     guestSession ? { setupDone: true, guest: true, lang: saved.lang || 'ru', region: saved.region || null } : saved
   );
   const save = () => { if (!guestSession) write(STATE_KEY, state); };
-  // Обои с листиком — новые обои по умолчанию; выбранные вручную не трогаем.
-  if (!state.wallpaperPicked) state.wallpaper = 'leaf';
+  // Обои BOS 02 — новые обои по умолчанию; выбранные вручную не трогаем.
+  if (!state.wallpaperPicked) state.wallpaper = 'bos02';
 
   const displayName = () => (state.guest ? BOS.t('guest.name') : state.name);
   const accountLabel = () => (state.id ? state.id + ID_SUFFIX : BOS.t('guest.label'));
@@ -163,6 +164,28 @@ window.BOS = (function () {
     state.wallpaperPicked = true;
     save();
     emit('wallpaper');
+  }
+
+  // BOS 02: мышка, громкость и яркость.
+  function setCursor(id) {
+    state.cursor = id;
+    save();
+    emit('cursor');
+  }
+  function setVolume(value) {
+    state.volume = Math.max(0, Math.min(1, value));
+    save();
+    emit('volume');
+  }
+  function applyBrightness() {
+    const screen = document.getElementById('screen');
+    if (screen) screen.style.filter = state.brightness < 1 ? `brightness(${state.brightness})` : '';
+  }
+  function setBrightness(value) {
+    state.brightness = Math.max(0.3, Math.min(1, value));
+    applyBrightness();
+    save();
+    emit('brightness');
   }
 
   let guestPhoto = null;
@@ -375,6 +398,12 @@ window.BOS = (function () {
     spark: '<path d="M12 3.5c.6 4.4 2.6 6.4 7 7-4.4.6-6.4 2.6-7 7-.6-4.4-2.6-6.4-7-7 4.4-.6 6.4-2.6 7-7z"/><path d="M19 3v3M17.5 4.5h3"/>',
     arrange: '<rect x="4" y="4" width="6" height="6" rx="1.5"/><rect x="14" y="4" width="6" height="6" rx="1.5"/><rect x="4" y="14" width="6" height="6" rx="1.5"/><rect x="14" y="14" width="6" height="6" rx="1.5"/>',
     update: '<path d="M20 12a8 8 0 1 1-2.6-5.9L20 8.5"/><path d="M20 3.5v5h-5M12 8v4.5l3 2"/>',
+    mic: '<rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5.5 11a6.5 6.5 0 0 0 13 0M12 17.5V21M8.5 21h7"/>',
+    backspace: '<path d="M9 5h10.5A1.5 1.5 0 0 1 21 6.5v11a1.5 1.5 0 0 1-1.5 1.5H9l-6-7z"/><path d="m11.5 9.5 5 5M16.5 9.5l-5 5"/>',
+    enter: '<path d="M19 5v6.5a2.5 2.5 0 0 1-2.5 2.5H5M9.5 9.5 5 14l4.5 4.5"/>',
+    camera: '<path d="M4 8.5A1.5 1.5 0 0 1 5.5 7h2.3l1.6-2.2h5.2L16.2 7h2.3A1.5 1.5 0 0 1 20 8.5v9a1.5 1.5 0 0 1-1.5 1.5h-13A1.5 1.5 0 0 1 4 17.5z"/><circle cx="12" cy="12.8" r="3.6"/>',
+    flip: '<path d="M4 10a8 8 0 0 1 14.3-3.4M20 14a8 8 0 0 1-14.3 3.4"/><path d="M18.5 3v4h-4M5.5 21v-4h4"/>',
+    wall: '<rect x="3.5" y="4" width="17" height="16" rx="2"/><path d="m3.5 16 5-4.5 4 3.5 3-2.5 5 4"/>',
     logout: '<path d="M15 4h3.5A1.5 1.5 0 0 1 20 5.5v13a1.5 1.5 0 0 1-1.5 1.5H15M10 16l-4-4 4-4M6 12h10"/>',
   };
   function icon(name) {
@@ -399,13 +428,15 @@ window.BOS = (function () {
   // Приложения из B Store появляются в системе только после установки.
   // Встроенные можно удалить и вернуть через B Store, кроме Настроек и трёх, без которых их не вернуть.
   const STORE_APPS = ['slides', 'montage'];
+  // Камера и Фото есть только в BOS MOBILE.
+  const MOBILE_APPS = ['camera', 'photos'];
   const CORE_APPS = ['settings', 'browser', 'files', 'store'];
   const canRemove = (id) => !CORE_APPS.includes(id);
   // Настройки раньше можно было удалить: если так и сделали, они возвращаются.
   state.removed = state.removed.filter(canRemove);
   const isInstalled = (id) => (STORE_APPS.includes(id) ? state.installed.includes(id) : !state.removed.includes(id));
   function availableApps() {
-    const list = [...APP_ORDER, ...STORE_APPS].filter(isInstalled);
+    const list = [...APP_ORDER, ...(BOS.mobile ? MOBILE_APPS : []), ...STORE_APPS].filter(isInstalled);
     const rank = new Map(list.map((id, i) => {
       const placed = state.order.indexOf(id);
       return [id, placed < 0 ? 1000 + i : placed];
@@ -511,11 +542,12 @@ window.BOS = (function () {
     setTextColor, applyTextColor, TEXT_COLORS,
     setWallpaper, getPhoto, savePhoto,
     setAirplane, netStatus,
+    setCursor, setVolume, setBrightness, applyBrightness, MOBILE_APPS,
     setTextSize, applyTextSize, TEXT_SIZES, setPinned,
     setPassword, checkPassword, sha256,
     APP_ORDER, appIcon, appSearch, powerOff,
     STORE_APPS, availableApps, isAvailable, isInstalled, canRemove, install, uninstall, setOrder, setHomeOrder, setDeskPos, arrangeDesk,
-    VERSION: '01',
+    VERSION: '02',
     guestSession, startGuest, endGuest, displayName, accountLabel,
     knownIds, rememberId, normalizeId, isValidId, ID_SUFFIX,
     factoryReset,
