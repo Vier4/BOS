@@ -411,7 +411,18 @@
         win.listen('airplane', sync);
         win.listen('net', sync);
         sync();
-        return [h('label', { class: 'set-switch' }, h('span', { i18n: 'set.airplane' }), toggle, h('i')), status];
+        // BOS 03: Wi‑Fi настоящего устройства. Подключиться к сети из BOS нельзя — только посмотреть.
+        const wifi = h('output', { class: 'set-value' });
+        const syncWifi = () => {
+          wifi.dataset.i18n = `net.wifi.${BOS.wifi.status()}`;
+          BOS.applyI18nTo(wifi);
+        };
+        if (BOS.wifi) {
+          win.listen('wifi', syncWifi);
+          syncWifi();
+        }
+        return [h('label', { class: 'set-switch' }, h('span', { i18n: 'set.airplane' }), toggle, h('i')), status,
+          BOS.wifi ? h('div', { class: 'set-row wifi-row' }, h('label', { i18n: 'net.wifi' }), wifi, h('p', { class: 'set-desc', i18n: 'net.wifiNote' })) : null];
       });
 
       if (!BOS.guestSession) section('security', 'set.security', () => {

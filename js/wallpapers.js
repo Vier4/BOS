@@ -104,7 +104,14 @@
     </svg>`;
   }
 
+  // Обои «Горы» (BOS 03): настоящее фото — озеро Морейн в Канаде (CC0, см. img/CREDITS.md).
+  // В тёмной теме фото немного затемняется.
+  const peaks = () => `<svg viewBox="0 0 1920 1280" preserveAspectRatio="xMidYMid slice">
+      <image href="img/mountains.jpg" width="1920" height="1280" preserveAspectRatio="xMidYMid slice"/>
+      <rect class="peaks-shade" width="1920" height="1280"/></svg>`;
+
   const PAINTERS = {
+    peaks: () => '',
     bos03: () => '',
     bos02: () => '',
     leaf() {
@@ -174,11 +181,12 @@
   };
 
   // Обои BOS 02 появляются только после обновления.
-  BOS.WALLPAPERS = Object.keys(PAINTERS).filter((id) => (id !== 'bos02' || BOS.is02) && (id !== 'bos03' || BOS.is03));
+  BOS.WALLPAPERS = Object.keys(PAINTERS).filter((id) => (id !== 'bos02' || BOS.is02) && ((id !== 'bos03' && id !== 'peaks') || BOS.is03));
   const portraitNow = (mini) => !mini && (BOS.mobile || innerHeight > innerWidth);
   BOS.wallpaperSvg = (id, mini = false) => {
     if (id === 'bos02') return bos02(portraitNow(mini));
     if (id === 'bos03') return bos03(portraitNow(mini), mini);
+    if (id === 'peaks') return peaks();
     return svg(PAINTERS[id](mini));
   };
 
@@ -189,7 +197,7 @@
       const photo = BOS.state.wallpaper === 'photo' && BOS.getPhoto();
       wall.className = photo ? 'wall photo' : 'wall';
       if (photo) wall.replaceChildren(BOS.h('img', { src: photo, alt: '' }));
-      else wall.innerHTML = BOS.wallpaperSvg(BOS.state.wallpaper === 'photo' || !BOS.WALLPAPERS.includes(BOS.state.wallpaper) ? (BOS.is03 ? 'bos03' : BOS.is02 ? 'bos02' : 'leaf') : BOS.state.wallpaper);
+      else wall.innerHTML = BOS.wallpaperSvg(BOS.state.wallpaper === 'photo' || !BOS.WALLPAPERS.includes(BOS.state.wallpaper) ? (BOS.is03 ? 'peaks' : BOS.is02 ? 'bos02' : 'leaf') : BOS.state.wallpaper);
     }
     BOS.on('wallpaper', sync);
     // Обои BOS 02 перерисовываются, когда экран поворачивается из альбомного в книжный и обратно.

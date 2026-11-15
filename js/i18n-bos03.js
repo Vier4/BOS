@@ -592,3 +592,64 @@ BOS.addStrings({
     "gs.desc.tower": "Build a tower of slabs. The more precise, the higher it gets."
   }
 });
+
+// Обои «Горы» и Wi‑Fi
+BOS.addStrings({
+  "ru": {
+    "wall.peaks": "Горы",
+    "wifi.on": "Wi‑Fi подключён",
+    "net.wifi": "Wi‑Fi этого устройства",
+    "net.wifi.on": "Подключено к Wi‑Fi",
+    "net.wifi.off": "Нет Wi‑Fi",
+    "net.wifi.unknown": "Этот браузер не сообщает, есть ли Wi‑Fi, поэтому значок не показывается",
+    "net.wifiNote": "BOS показывает Wi‑Fi телефона или компьютера, на котором её открыли. Подключиться к другой сети из BOS нельзя."
+  },
+  "en": {
+    "wall.peaks": "Mountains",
+    "wifi.on": "Wi‑Fi connected",
+    "net.wifi": "This device’s Wi‑Fi",
+    "net.wifi.on": "Connected to Wi‑Fi",
+    "net.wifi.off": "No Wi‑Fi",
+    "net.wifi.unknown": "This browser doesn’t say whether there is Wi‑Fi, so the icon is hidden",
+    "net.wifiNote": "BOS shows the Wi‑Fi of the phone or computer it runs on. You can’t join another network from BOS."
+  },
+  "uk": {
+    "wall.peaks": "Гори"
+  },
+  "de": {
+    "wall.peaks": "Berge"
+  },
+  "es": {
+    "wall.peaks": "Montañas"
+  },
+  "fr": {
+    "wall.peaks": "Montagnes"
+  },
+  "it": {
+    "wall.peaks": "Montagne"
+  },
+  "pt": {
+    "wall.peaks": "Montanhas"
+  },
+  "pl": {
+    "wall.peaks": "Góry"
+  },
+  "nl": {
+    "wall.peaks": "Bergen"
+  },
+  "tr": {
+    "wall.peaks": "Dağlar"
+  },
+  "kk": {
+    "wall.peaks": "Таулар"
+  },
+  "zh": {
+    "wall.peaks": "群山"
+  },
+  "ja": {
+    "wall.peaks": "山"
+  },
+  "ko": {
+    "wall.peaks": "산"
+  }
+});

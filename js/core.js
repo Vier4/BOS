@@ -42,8 +42,8 @@ window.BOS = (function () {
   if (is03) document.documentElement.classList.add('bos03');
   const save = () => { if (!guestSession) write(STATE_KEY, state); };
   // Обои по умолчанию: у каждой версии свои. Выбранные вручную не трогаем, если они есть в этой версии.
-  const defaultWall = (level) => ({ 2: 'bos02', 3: 'bos03' }[level] || 'leaf');
-  const wallTooNew = (id) => (id === 'bos02' && !is02) || (id === 'bos03' && !is03);
+  const defaultWall = (level) => ({ 2: 'bos02', 3: 'peaks' }[level] || 'leaf');
+  const wallTooNew = (id) => (id === 'bos02' && !is02) || ((id === 'bos03' || id === 'peaks') && !is03);
   if (!state.wallpaperPicked || wallTooNew(state.wallpaper)) state.wallpaper = defaultWall(LEVEL);
 
   const displayName = () => (state.guest ? BOS.t('guest.name') : state.name);
@@ -231,7 +231,7 @@ window.BOS = (function () {
   function setOs(version) {
     state.os = version;
     const level = Number(version);
-    if (!state.wallpaperPicked || (state.wallpaper === 'bos03' && level < 3) || (state.wallpaper === 'bos02' && level < 2)) {
+    if (!state.wallpaperPicked || (['bos03', 'peaks'].includes(state.wallpaper) && level < 3) || (state.wallpaper === 'bos02' && level < 2)) {
       state.wallpaper = defaultWall(level);
     }
     if (guestSession) {
@@ -462,6 +462,7 @@ window.BOS = (function () {
     camera: '<path d="M4 8.5A1.5 1.5 0 0 1 5.5 7h2.3l1.6-2.2h5.2L16.2 7h2.3A1.5 1.5 0 0 1 20 8.5v9a1.5 1.5 0 0 1-1.5 1.5h-13A1.5 1.5 0 0 1 4 17.5z"/><circle cx="12" cy="12.8" r="3.6"/>',
     flip: '<path d="M4 10a8 8 0 0 1 14.3-3.4M20 14a8 8 0 0 1-14.3 3.4"/><path d="M18.5 3v4h-4M5.5 21v-4h4"/>',
     wall: '<rect x="3.5" y="4" width="17" height="16" rx="2"/><path d="m3.5 16 5-4.5 4 3.5 3-2.5 5 4"/>',
+    wifi: '<path d="M2.5 9.2a14 14 0 0 1 19 0M5.6 12.6a9.4 9.4 0 0 1 12.8 0M8.7 16a5 5 0 0 1 6.6 0"/><circle cx="12" cy="19.2" r="1.2" fill="currentColor" stroke="none"/>',
     logout: '<path d="M15 4h3.5A1.5 1.5 0 0 1 20 5.5v13a1.5 1.5 0 0 1-1.5 1.5H15M10 16l-4-4 4-4M6 12h10"/>',
   };
   function icon(name) {

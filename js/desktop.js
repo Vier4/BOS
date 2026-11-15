@@ -338,6 +338,7 @@ BOS.runDesktop = function () {
     running,
     h('div', { class: 'island-tray' },
       timeButton,
+      BOS.wifi ? BOS.wifi.mark('island-wifi') : null,
       langCode,
       airplane,
       h('button', {

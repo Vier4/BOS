@@ -1549,3 +1549,17 @@ html.bos03 .game-glyph { background: radial-gradient(circle at 25% 15%, rgba(255
 .gs-question { font-size: calc(36px * var(--ts)); font-variant-numeric: tabular-nums; }
 .gs-options { display: grid; grid-template-columns: repeat(2, minmax(0, 120px)); gap: 8px; }
 .gs-options .btn { font-size: 20px; }
+
+/* BOS 03: обои «Горы» */
+.peaks-shade { fill: #0b1030; opacity: 0; transition: opacity .3s; }
+[data-theme="dark"] .peaks-shade { opacity: .38; }
+
+/* BOS 03: Wi‑Fi устройства */
+.wifi-mark { display: inline-flex; align-items: center; }
+.m-wifi .ic { width: 16px; height: 16px; }
+.island-wifi { padding: 0 4px; color: var(--ink); }
+.island-wifi .ic { width: 18px; height: 18px; }
+.wifi-row { margin-top: 18px; }
+/* Часы и дата читаются и поверх фото */
+html.bos03 :is(.m-clock, .poster) { text-shadow: 0 1px 14px rgba(255,255,255,.55), 0 0 2px rgba(255,255,255,.6); }
+html.bos03[data-theme="dark"] :is(.m-clock, .poster) { text-shadow: 0 1px 14px rgba(0,0,0,.55); }

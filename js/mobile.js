@@ -119,7 +119,7 @@ BOS.runMobile = function () {
   // Верхняя шторка: смахните вниз по строке состояния.
   // В BOS 01 шторки нет.
   const shade = BOS.is02 ? BOS.createShade() : null;
-  const statusBar = h('header', { class: 'm-status' }, statusTime, h('span', { class: 'm-status-right' }, planeMark, h('span', {}, BOS.is02 ? `BOS ${BOS.VERSION}` : 'BOS')));
+  const statusBar = h('header', { class: 'm-status' }, statusTime, h('span', { class: 'm-status-right' }, BOS.wifi ? BOS.wifi.mark('m-wifi') : null, planeMark, h('span', {}, BOS.is02 ? `BOS ${BOS.VERSION}` : 'BOS')));
   if (shade) shade.attachHandle(statusBar);
 
   // Полоска внизу — кнопка «Домой»: сворачивает приложения и показывает главный экран.
