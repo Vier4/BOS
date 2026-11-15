@@ -110,7 +110,71 @@
       <image href="img/mountains.jpg" width="1920" height="1280" preserveAspectRatio="xMidYMid slice"/>
       <rect class="peaks-shade" width="1920" height="1280"/></svg>`;
 
+  // Новогодние обои (BOS 03 New Year Edition): северное сияние, ёлки в снегу, наряженная ёлка и год.
+  function newyear(portrait, mini) {
+    const n = ++gradientId;
+    const W = portrait ? 1000 : WIDTH;
+    const H = portrait ? 1600 : HEIGHT;
+    const year = new Date().getMonth() >= 9 ? new Date().getFullYear() + 1 : new Date().getFullYear();
+    const ground = H * 0.72;
+    let seed = 7;
+    const rnd = () => { seed = (seed * 9301 + 49297) % 233280; return seed / 233280; };
+    const stars = Array.from({ length: mini ? 30 : 110 }, () => `<circle cx="${(rnd() * W).toFixed(0)}" cy="${(rnd() * ground * 0.8).toFixed(0)}" r="${(rnd() * 2 + 0.6).toFixed(1)}"/>`).join('');
+    const fir = (x, y, s) => `<g transform="translate(${x} ${y}) scale(${s})">
+      <rect x="-6" y="-8" width="12" height="22" fill="#5b3a1e"/>
+      <path d="M0-150L48-60H22L62 0H-62L-22-60H-48z" class="ny-fir"/>
+      <path d="M0-150L18-116 6-112 0-120-8-110-18-118zM-22-60H22L30-48 16-52 4-44-8-52-22-46-30-50zM-62 0H62L54-8 38-4 24-10 8-4-8-10-24-4-40-10-54-4z" fill="#fff" opacity=".92"/></g>`;
+    const firs = (portrait ? [[90, ground + 40, 0.9], [880, ground + 60, 1.1], [760, ground + 10, 0.7], [210, ground - 10, 0.6]]
+      : [[120, ground + 60, 1.1], [260, ground + 20, 0.8], [1380, ground + 70, 1.2], [1500, ground + 30, 0.9], [1250, ground + 10, 0.7], [380, ground, 0.6]])
+      .map(([x, y, sc]) => fir(x, y, sc)).join('');
+    const tx = portrait ? 500 : 1040;
+    const ty = ground + (portrait ? 180 : 140);
+    const ts = portrait ? 2.6 : 2.2;
+    const COLORS = ['#ef4444', '#facc15', '#22d3ee', '#a855f7', '#f97316', '#4ade80'];
+    const lights = Array.from({ length: 22 }, (_, i) => {
+      const row = Math.floor(i / 6);
+      const k = (i % 6) / 5 - 0.5;
+      const yy = -128 + row * 34 + Math.abs(k) * 10;
+      const xx = k * (30 + row * 22);
+      return `<circle class="ny-light" style="--d:${(i % 5) * 0.4}s" cx="${xx.toFixed(1)}" cy="${yy.toFixed(1)}" r="4" fill="${COLORS[i % COLORS.length]}"/>`;
+    }).join('');
+    const house = (x, y, s) => `<g transform="translate(${x} ${y}) scale(${s})"><rect x="-40" y="-50" width="80" height="50" fill="#7c2d12"/><path d="M-50-48L0-90 50-48z" fill="#fff"/><path d="M-50-48L0-90 50-48" stroke="#cbd5e1" stroke-width="3" fill="none"/>
+      <rect x="-26" y="-38" width="18" height="18" fill="#fde68a" class="ny-window"/><rect x="8" y="-38" width="18" height="18" fill="#fde68a" class="ny-window"/></g>`;
+    const houses = portrait ? house(300, ground + 70, 1.1) + house(690, ground + 50, 0.9) : house(560, ground + 60, 1) + house(760, ground + 40, 0.8);
+    const text = portrait
+      ? `<text class="b3-text ny-year" x="500" y="${H * 0.42}" font-size="280">${year}</text>`
+      : `<text class="b3-text ny-year" x="560" y="${H * 0.46}" font-size="260">${year}</text>`;
+    return `<svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="xMidYMid slice"><defs>
+        <linearGradient id="ny-sky-${n}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" style="stop-color:var(--ny-sky1)"/><stop offset=".7" style="stop-color:var(--ny-sky2)"/><stop offset="1" style="stop-color:var(--ny-sky3)"/></linearGradient>
+        <linearGradient id="ny-snow-${n}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffffff"/><stop offset="1" style="stop-color:var(--ny-snow2)"/></linearGradient>
+        <filter id="ny-blur-${n}" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="${mini ? 12 : 30}"/></filter>
+        <radialGradient id="ny-glow-${n}"><stop offset="0" stop-color="#fef9c3" stop-opacity=".9"/><stop offset="1" stop-color="#fef9c3" stop-opacity="0"/></radialGradient>
+        <linearGradient id="ny-shine-${n}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff" stop-opacity=".8"/><stop offset="1" stop-color="#fff" stop-opacity=".2"/></linearGradient>
+      </defs>
+      <rect width="${W}" height="${H}" fill="url(#ny-sky-${n})"/>
+      <g class="ny-aurora" filter="url(#ny-blur-${n})">
+        <path d="M-100 ${H * 0.18}C${W * 0.2} ${H * 0.05} ${W * 0.45} ${H * 0.34} ${W * 0.7} ${H * 0.16}S${W + 100} ${H * 0.2} ${W + 100} ${H * 0.12}" stroke="#34d399" stroke-width="${H * 0.08}" fill="none" opacity=".55"/>
+        <path d="M-100 ${H * 0.28}C${W * 0.3} ${H * 0.18} ${W * 0.5} ${H * 0.4} ${W + 100} ${H * 0.22}" stroke="#a78bfa" stroke-width="${H * 0.05}" fill="none" opacity=".45"/>
+      </g>
+      <g class="ny-stars">${stars}</g>
+      <circle cx="${W * 0.84}" cy="${H * 0.14}" r="${H * 0.09}" fill="url(#ny-glow-${n})"/>
+      <circle cx="${W * 0.84}" cy="${H * 0.14}" r="${H * 0.04}" class="ny-moon"/>
+      <g fill="url(#ny-shine-${n})" stroke="#fff" stroke-opacity=".75" stroke-width="3" font-weight="900">${text}</g>
+      <path d="M0 ${ground}C${W * 0.2} ${ground - 60} ${W * 0.4} ${ground + 30} ${W * 0.6} ${ground - 20}S${W * 0.9} ${ground - 50} ${W} ${ground}V${H}H0z" fill="url(#ny-snow-${n})"/>
+      ${houses}${firs}
+      <g transform="translate(${tx} ${ty}) scale(${ts})">
+        <rect x="-8" y="-10" width="16" height="24" fill="#5b3a1e"/>
+        <path d="M0-170L40-110H18L56-55H28L70 0H-70L-28-55H-56L-18-110H-40z" fill="#166534"/>
+        <path d="M0-170L40-110H18L56-55H28L70 0H-70L-28-55H-56L-18-110H-40z" fill="none" stroke="#14532d" stroke-width="2"/>
+        <path d="M-30-104Q0-90 30-104M-48-50Q0-30 48-50M-62-4Q0 16 62-4" stroke="#facc15" stroke-width="2.5" fill="none" opacity=".85"/>
+        ${lights}
+        <path class="ny-star" d="M0-196L6-180 23-180 9-170 14-154 0-164-14-154-9-170-23-180-6-180z"/>
+      </g>
+    </svg>`;
+  }
+
   const PAINTERS = {
+    newyear: () => '',
     peaks: () => '',
     bos03: () => '',
     bos02: () => '',
@@ -181,12 +245,13 @@
   };
 
   // Обои BOS 02 появляются только после обновления.
-  BOS.WALLPAPERS = Object.keys(PAINTERS).filter((id) => (id !== 'bos02' || BOS.is02) && ((id !== 'bos03' && id !== 'peaks') || BOS.is03));
+  BOS.WALLPAPERS = Object.keys(PAINTERS).filter((id) => (id !== 'bos02' || BOS.is02) && ((id !== 'bos03' && id !== 'peaks') || BOS.is03) && (id !== 'newyear' || BOS.isNY));
   const portraitNow = (mini) => !mini && (BOS.mobile || innerHeight > innerWidth);
   BOS.wallpaperSvg = (id, mini = false) => {
     if (id === 'bos02') return bos02(portraitNow(mini));
     if (id === 'bos03') return bos03(portraitNow(mini), mini);
     if (id === 'peaks') return peaks();
+    if (id === 'newyear') return newyear(portraitNow(mini), mini);
     return svg(PAINTERS[id](mini));
   };
 
@@ -197,7 +262,9 @@
       const photo = BOS.state.wallpaper === 'photo' && BOS.getPhoto();
       wall.className = photo ? 'wall photo' : 'wall';
       if (photo) wall.replaceChildren(BOS.h('img', { src: photo, alt: '' }));
-      else wall.innerHTML = BOS.wallpaperSvg(BOS.state.wallpaper === 'photo' || !BOS.WALLPAPERS.includes(BOS.state.wallpaper) ? (BOS.is03 ? 'peaks' : BOS.is02 ? 'bos02' : 'leaf') : BOS.state.wallpaper);
+      else wall.innerHTML = BOS.wallpaperSvg(BOS.state.wallpaper === 'photo' || !BOS.WALLPAPERS.includes(BOS.state.wallpaper) ? (BOS.isNY ? 'newyear' : BOS.is03 ? 'peaks' : BOS.is02 ? 'bos02' : 'leaf') : BOS.state.wallpaper);
+      // New Year Edition: снег идёт поверх любых обоев (его можно выключить в шторке).
+      if (wall.snow) wall.append(wall.snow);
     }
     BOS.on('wallpaper', sync);
     // Обои BOS 02 перерисовываются, когда экран поворачивается из альбомного в книжный и обратно.
@@ -205,8 +272,9 @@
     window.addEventListener('resize', () => {
       if (portrait === innerHeight > innerWidth) return;
       portrait = !portrait;
-      if (BOS.state.wallpaper === 'bos02' || BOS.state.wallpaper === 'bos03') sync();
+      if (['bos02', 'bos03', 'newyear'].includes(BOS.state.wallpaper)) sync();
     });
+    if (BOS.ny) wall.snow = BOS.ny.snowLayer();
     sync();
     return wall;
   };

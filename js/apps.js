@@ -160,12 +160,15 @@
         // На BOS 02 обновлений нет, но можно вернуться на BOS 01, чтобы обновиться снова.
         const product = BOS.mobile ? 'BOS MOBILE' : 'BOS';
         // «Что нового» для BOS 02 и BOS 03.
-        const whatsNew = (level) => h('div', { class: 'upd-new' },
-          h('b', { i18n: 'upd.newV', i18nVars: { v: `0${level}` } }),
-          h('p', { class: 'set-desc', i18n: level === 3 ? 'upd.notes03' : 'upd.notes' }));
-        const latest = BOS.LEVEL >= Number(BOS.LATEST);
-        const foundState = () => { updateState.dataset.i18n = 'upd.foundV'; updateState.i18nVars = { v: BOS.LATEST }; BOS.applyI18nTo(updateState); };
-        const updateState = h('p', { class: 'set-desc', i18n: latest ? 'upd.current' : 'upd.foundV', i18nVars: { v: BOS.LATEST } });
+        const label = (level) => BOS.versionLabel(BOS.VERSIONS[level - 1]);
+        const NOTES = { 2: 'upd.notes', 3: 'upd.notes03', 4: 'upd.notesNY' };
+        const whatsNew = (level) => h('div', { class: `upd-new${level === 4 ? ' ny' : ''}` },
+          h('b', { i18n: 'upd.newV', i18nVars: { v: label(level) } }),
+          h('p', { class: 'set-desc', i18n: NOTES[level] }));
+        const latest = BOS.LEVEL >= BOS.VERSIONS.length;
+        const latestLabel = BOS.versionLabel(BOS.LATEST);
+        const foundState = () => { updateState.dataset.i18n = 'upd.foundV'; updateState.i18nVars = { v: latestLabel }; BOS.applyI18nTo(updateState); };
+        const updateState = h('p', { class: 'set-desc', i18n: latest ? 'upd.current' : 'upd.foundV', i18nVars: { v: latestLabel } });
         const checkButton = h('button', {
           type: 'button',
           class: 'btn outline',
@@ -217,7 +220,7 @@
               setTimeout(() => {
                 BOS.show(h('div', { class: 'boot' },
                   mark('mark big'),
-                  h('b', {}, `${product} ${target}`),
+                  h('b', {}, `${product} ${BOS.versionLabel(target)}`),
                   h('div', { class: 'boot-line' }, h('i'))));
                 setTimeout(() => location.reload(), 1500);
               }, 600);
@@ -230,14 +233,14 @@
         const offer = h('div', { class: 'upd-offer' },
           h('div', { class: 'about update-card' },
             mark('mark big'),
-            h('div', {}, h('b', {}, `${product} ${BOS.LATEST}`), h('p', { i18n: 'upd.available' }))),
-          whatsNew(3),
-          BOS.LEVEL < 2 ? whatsNew(2) : null,
+            h('div', {}, h('b', {}, `${product} ${latestLabel}`), h('p', { i18n: 'upd.available' }))),
+          // «Что нового» во всех версиях, которых ещё нет, — от самой новой.
+          [4, 3, 2].filter((level) => level > BOS.LEVEL).map(whatsNew),
           installButton);
         // Возврат на прошлую версию, чтобы можно было обновиться снова.
-        const previous = `0${BOS.LEVEL - 1}`;
+        const previous = BOS.VERSIONS[BOS.LEVEL - 2];
         const rollbackButton = BOS.LEVEL > 1
-          ? h('button', { type: 'button', class: 'btn ghost upd-back', onclick: () => runUpdate(previous) }, BOS.icon('restart'), h('span', { i18n: 'upd.rollbackTo', i18nVars: { v: previous } }))
+          ? h('button', { type: 'button', class: 'btn ghost upd-back', onclick: () => runUpdate(previous) }, BOS.icon('restart'), h('span', { i18n: 'upd.rollbackTo', i18nVars: { v: BOS.versionLabel(previous) } }))
           : null;
 
         const update = h('div', { class: 'set-sub', hidden: true },

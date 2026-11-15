@@ -653,3 +653,131 @@ BOS.addStrings({
     "wall.peaks": "산"
   }
 });
+
+// Новогодний шрифт
+BOS.addStrings({
+  "ru": {
+    "font.newyear": "Новогодний"
+  },
+  "en": {
+    "font.newyear": "New Year"
+  },
+  "uk": {
+    "font.newyear": "Новорічний"
+  },
+  "de": {
+    "font.newyear": "Neujahr"
+  },
+  "es": {
+    "font.newyear": "Año Nuevo"
+  },
+  "fr": {
+    "font.newyear": "Nouvel An"
+  },
+  "it": {
+    "font.newyear": "Capodanno"
+  },
+  "pt": {
+    "font.newyear": "Ano Novo"
+  },
+  "pl": {
+    "font.newyear": "Noworoczny"
+  },
+  "nl": {
+    "font.newyear": "Nieuwjaar"
+  },
+  "tr": {
+    "font.newyear": "Yılbaşı"
+  },
+  "kk": {
+    "font.newyear": "Жаңа жылдық"
+  },
+  "zh": {
+    "font.newyear": "新年"
+  },
+  "ja": {
+    "font.newyear": "お正月"
+  },
+  "ko": {
+    "font.newyear": "새해"
+  }
+});
+
+// BOS 03 New Year Edition
+BOS.addStrings({
+  "ru": {
+    "upd.notesNY": "Новогодние обои со снегопадом, новогодний стиль всего BOS и всех логотипов, новогодний шрифт, новогодняя клавиатура, отсчёт до Нового года с салютом и приложение «Адвент-календарь».",
+    "app.advent": "Адвент-календарь",
+    "emo.newyear": "Новый год",
+    "ny.snow": "Снег",
+    "ny.fireworks": "Салют",
+    "ny.happy": "С Новым {y} годом!",
+    "ny.left": "До {y} года: {d} дн. {h} ч {m} мин",
+    "ny.leftToday": "До {y} года: {h} ч {m} мин!",
+    "adv.today": "Сегодня открывается дверца № {n}",
+    "adv.after": "Праздник наступил — все дверцы открыты!",
+    "adv.before": "Первая дверца откроется 1 декабря · осталось дней: {n}",
+    "adv.locked": "Эта дверца откроется {date}",
+    "adv.count": "Подарков: {n} из 31",
+    "adv.early": "Открывать раньше срока",
+    "adv.close": "Закрыть",
+    "adv.snow": "Включить снег"
+  },
+  "en": {
+    "upd.notesNY": "Festive wallpaper with falling snow, a New Year look for all of BOS and every logo, a New Year font, a festive keyboard, a New Year countdown with fireworks and the Advent Calendar app.",
+    "app.advent": "Advent Calendar",
+    "emo.newyear": "New Year",
+    "ny.snow": "Snow",
+    "ny.fireworks": "Fireworks",
+    "ny.happy": "Happy New Year {y}!",
+    "ny.left": "Until {y}: {d} d {h} h {m} min",
+    "ny.leftToday": "Until {y}: {h} h {m} min!",
+    "adv.today": "Today door #{n} opens",
+    "adv.after": "The holiday is here — every door is open!",
+    "adv.before": "The first door opens on December 1 · days left: {n}",
+    "adv.locked": "This door opens on {date}",
+    "adv.count": "Gifts: {n} of 31",
+    "adv.early": "Open doors early",
+    "adv.close": "Close",
+    "adv.snow": "Turn on snow"
+  },
+  "uk": {
+    "upd.notesNY": "Новорічні шпалери зі снігопадом, новорічний стиль усієї BOS і логотипів, новорічний шрифт і клавіатура, відлік до Нового року з салютом і застосунок «Адвент-календар»."
+  },
+  "de": {
+    "upd.notesNY": "Festlicher Hintergrund mit Schneefall, Neujahrs-Look für ganz BOS und alle Logos, eine Neujahrsschrift, eine festliche Tastatur, ein Countdown mit Feuerwerk und die App „Adventskalender“."
+  },
+  "es": {
+    "upd.notesNY": "Fondo festivo con nieve, aspecto de Año Nuevo en todo BOS y sus logotipos, fuente y teclado de Año Nuevo, cuenta atrás con fuegos artificiales y la app Calendario de Adviento."
+  },
+  "fr": {
+    "upd.notesNY": "Fond festif avec neige, look du Nouvel An pour tout BOS et ses logos, police et clavier du Nouvel An, compte à rebours avec feu d’artifice et l’app Calendrier de l’Avent."
+  },
+  "it": {
+    "upd.notesNY": "Sfondo festivo con neve, stile di Capodanno per tutto BOS e i loghi, font e tastiera di Capodanno, conto alla rovescia con fuochi d’artificio e l’app Calendario dell’Avvento."
+  },
+  "pt": {
+    "upd.notesNY": "Fundo festivo com neve, visual de Ano Novo em todo o BOS e nos logotipos, fonte e teclado de Ano Novo, contagem regressiva com fogos e o app Calendário do Advento."
+  },
+  "pl": {
+    "upd.notesNY": "Świąteczna tapeta ze śniegiem, noworoczny wygląd całego BOS i logo, noworoczna czcionka i klawiatura, odliczanie z fajerwerkami i aplikacja Kalendarz adwentowy."
+  },
+  "nl": {
+    "upd.notesNY": "Feestelijke achtergrond met sneeuw, nieuwjaarsstijl voor heel BOS en alle logo’s, een nieuwjaarslettertype en -toetsenbord, aftellen met vuurwerk en de app Adventskalender."
+  },
+  "tr": {
+    "upd.notesNY": "Kar yağan bayram duvar kâğıdı, tüm BOS ve logolar için yılbaşı görünümü, yılbaşı yazı tipi ve klavyesi, havai fişekli geri sayım ve Advent Takvimi uygulaması."
+  },
+  "kk": {
+    "upd.notesNY": "Қар жауған мерекелік тұсқағаз, бүкіл BOS пен логотиптерге жаңа жылдық стиль, жаңа жылдық қаріп пен пернетақта, отшашумен кері санақ және «Адвент-күнтізбе» қолданбасы."
+  },
+  "zh": {
+    "upd.notesNY": "飘雪的节日壁纸、全新新年风格的 BOS 和图标、新年字体与键盘、带烟花的新年倒计时，以及“降临节日历”应用。"
+  },
+  "ja": {
+    "upd.notesNY": "雪が降るお祝いの壁紙、BOS 全体とすべてのロゴの新年デザイン、新年フォントとキーボード、花火つきカウントダウン、アドベントカレンダーアプリ。"
+  },
+  "ko": {
+    "upd.notesNY": "눈 내리는 축제 배경화면, BOS 전체와 모든 로고의 새해 디자인, 새해 글꼴과 키보드, 불꽃놀이 카운트다운, 대림절 달력 앱."
+  }
+});

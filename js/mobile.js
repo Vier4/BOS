@@ -119,7 +119,7 @@ BOS.runMobile = function () {
   // Верхняя шторка: смахните вниз по строке состояния.
   // В BOS 01 шторки нет.
   const shade = BOS.is02 ? BOS.createShade() : null;
-  const statusBar = h('header', { class: 'm-status' }, statusTime, h('span', { class: 'm-status-right' }, BOS.wifi ? BOS.wifi.mark('m-wifi') : null, planeMark, h('span', {}, BOS.is02 ? `BOS ${BOS.VERSION}` : 'BOS')));
+  const statusBar = h('header', { class: 'm-status' }, statusTime, h('span', { class: 'm-status-right' }, BOS.wifi ? BOS.wifi.mark('m-wifi') : null, planeMark, h('span', {}, BOS.isNY ? 'BOS 03 ❄' : BOS.is02 ? `BOS ${BOS.VERSION}` : 'BOS')));
   if (shade) shade.attachHandle(statusBar);
 
   // Полоска внизу — кнопка «Домой»: сворачивает приложения и показывает главный экран.
@@ -137,7 +137,7 @@ BOS.runMobile = function () {
 
   const homeMain = h('main', { class: 'm-home' },
     h('button', { type: 'button', class: 'btn primary edit-done home-done', i18n: 'apps.done', onclick: () => homeEdit.stop() }),
-    h('div', { class: 'm-clock' }, bigTime, date),
+    h('div', { class: 'm-clock' }, bigTime, date, BOS.ny ? BOS.ny.countdown('m-ny') : null),
     grid);
   homeEdit = BOS.editableGrid(grid, { container: homeMain, onReorder: BOS.setHomeOrder });
 

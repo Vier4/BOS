@@ -60,6 +60,16 @@
     focus: ['#67e8f9', '#1d4ed8', 'focus'],
     tales: ['#c4b5fd', '#be185d', 'tales'],
   };
+  // New Year Edition: праздничные цвета — красный, зелёный, золото, лёд и ночь — по кругу.
+  if (BOS.isNY) {
+    const FESTIVE = [['#f87171', '#991b1b'], ['#4ade80', '#14532d'], ['#fde68a', '#b45309'], ['#bae6fd', '#1e40af'], ['#c4b5fd', '#312e81']];
+    Object.keys(LOOK).forEach((id, i) => {
+      const [a, b] = FESTIVE[i % FESTIVE.length];
+      LOOK[id] = [a, b, LOOK[id][2]];
+    });
+    LOOK.advent = ['#fca5a5', '#7f1d1d', 'advent'];
+  }
+  GLYPHS.advent = '<rect x="3.5" y="5" width="17" height="15.5" rx="2"/><path d="M3.5 9.5h17M8 3v4M16 3v4"/><path d="M12 12.2l1 2 2.2.3-1.6 1.5.4 2.2-2-1-2 1 .4-2.2-1.6-1.5 2.2-.3z"/>';
   BOS.GLASS_LOOK = LOOK;
 
   const grad = (id, a, b) => `<linearGradient id="g3-${id}" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="${a}"/><stop offset="1" stop-color="${b}"/></linearGradient>`;
@@ -74,6 +84,11 @@
   </defs></svg>`;
   document.body.prepend(defs.firstChild);
 
+  // Снежная шапка по верхнему краю и золотая блёстка — на каждом новогоднем значке.
+  const NY_DECOR = `<path d="M0 0h64v7c-3 0-4 4-7 4s-3-5-7-5-4 6-8 6-4-4-7-4-3 5-7 5-4-6-8-6-3 4-6 4-4-3-7-3-2 3-4 3z" fill="#fff" opacity=".96"/>
+      <path d="M0 7c2 0 3 3 6 3" stroke="#cbd5e1" stroke-width=".8" fill="none"/>
+      <path d="M53 46l1.2 3.3 3.3 1.2-3.3 1.2-1.2 3.3-1.2-3.3-3.3-1.2 3.3-1.2z" fill="#fde68a"/>`;
+
   function glassSvg(id) {
     const look = LOOK[id];
     const glyph = GLYPHS[look[2]] || BOS.ICONS[look[2]] || '';
@@ -84,6 +99,7 @@
       <rect x="11" y="11" width="42" height="42" rx="14" fill="url(#g3-plate)" stroke="url(#g3-rim)" stroke-width="1.3"/>
       <g transform="translate(14 14) scale(1.5)" fill="none" stroke="#fff" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" color="#fff" filter="url(#g3-glow)">${glyph}</g>
       <path d="M0 0h64v20C44 27 20 27 0 19z" fill="url(#g3-shine)"/>
+      ${BOS.isNY ? NY_DECOR : ''}
     </svg>`;
   }
 

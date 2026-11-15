@@ -348,7 +348,7 @@ BOS.runDesktop = function () {
         onclick: () => BOS.setTheme(state.theme === 'light' ? 'dark' : 'light'),
       }, themeIcon)));
 
-  const poster = h('div', { class: 'poster' }, hello, bigTime, longDate);
+  const poster = h('div', { class: 'poster' }, hello, bigTime, longDate, BOS.ny ? BOS.ny.countdown('poster-ny') : null);
   const area = h('div', {
     class: 'desk',
     onpointerdown: (e) => {

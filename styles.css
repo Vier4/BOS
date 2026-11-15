@@ -1563,3 +1563,132 @@ html.bos03 .game-glyph { background: radial-gradient(circle at 25% 15%, rgba(255
 /* Часы и дата читаются и поверх фото */
 html.bos03 :is(.m-clock, .poster) { text-shadow: 0 1px 14px rgba(255,255,255,.55), 0 0 2px rgba(255,255,255,.6); }
 html.bos03[data-theme="dark"] :is(.m-clock, .poster) { text-shadow: 0 1px 14px rgba(0,0,0,.55); }
+
+/* ============ BOS 03 New Year Edition ============ */
+/* Новогодний шрифт: Lobster (SIL Open Font License, fonts/OFL.txt), лежит прямо в BOS. */
+@font-face { font-family: "BOS New Year"; src: url("fonts/lobster-cyrillic.woff2") format("woff2"); unicode-range: U+0301, U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116; font-display: swap; }
+@font-face { font-family: "BOS New Year"; src: url("fonts/lobster-latin-ext.woff2") format("woff2"); unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+1E00-1E9F, U+20A0-20AB, U+20AD-20C4, U+2C60-2C7F, U+A720-A7FF; font-display: swap; }
+@font-face { font-family: "BOS New Year"; src: url("fonts/lobster-latin.woff2") format("woff2"); unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+20AC, U+2122, U+2212, U+FEFF, U+FFFD; font-display: swap; }
+[data-font="newyear"] { --font: "BOS New Year", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+html.bosny { --ny-font: "BOS New Year", var(--font); }
+html.bosny :is(h1, h2, .poster-time, .poster-hello, .m-clock-time, .win-title, .welcome-hello, .set-pane > h2, .launcher-who b, .bstore-hero h2, .island-home span, .ny-title) {
+  font-family: var(--ny-font); font-weight: 400; letter-spacing: 0;
+}
+
+/* Новогодние цвета: акцент — праздничный красный, кромки — золото */
+html.bosny { --accent: #dc2626; --accent-ink: #b91c1c; --ny-gold: #fbbf24;
+  --ny-sky1: #7dd3fc; --ny-sky2: #c7d2fe; --ny-sky3: #fbcfe8; --ny-snow2: #dbeafe; }
+html.bosny[data-theme="dark"] { --accent: #ef4444; --accent-ink: #fca5a5;
+  --ny-sky1: #020617; --ny-sky2: #1e1b4b; --ny-sky3: #312e81; --ny-snow2: #94a3b8; }
+
+/* Обои: огоньки мигают, звезда сияет, окна светятся */
+.ny-fir { fill: #14532d; }
+.ny-stars { fill: #fff; opacity: .35; }
+html[data-theme="dark"] .ny-stars { opacity: .9; }
+.ny-moon { fill: #fef9c3; }
+.ny-aurora { opacity: .35; }
+html[data-theme="dark"] .ny-aurora { opacity: 1; }
+.ny-light { animation: ny-twinkle 1.6s ease-in-out infinite alternate; animation-delay: var(--d); }
+@keyframes ny-twinkle { from { opacity: .35; } to { opacity: 1; } }
+.ny-star { fill: #facc15; filter: drop-shadow(0 0 6px #fde047); }
+.ny-window { filter: drop-shadow(0 0 6px #fbbf24); }
+.ny-year { font-family: "BOS New Year", serif; font-weight: 400; }
+.ny-snow { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; }
+
+/* Гирлянда: на острове, в строке состояния телефона и над клавиатурой */
+html.bosny :is(.island, .m-status, .kb)::before {
+  content: ""; position: absolute; left: 14px; right: 14px; top: -6px; height: 14px; pointer-events: none; z-index: 3;
+  background:
+    radial-gradient(circle at 10px 9px, #ef4444 0 4px, transparent 5px) 0 0 / 80px 14px repeat-x,
+    radial-gradient(circle at 30px 9px, #facc15 0 4px, transparent 5px) 0 0 / 80px 14px repeat-x,
+    radial-gradient(circle at 50px 9px, #22c55e 0 4px, transparent 5px) 0 0 / 80px 14px repeat-x,
+    radial-gradient(circle at 70px 9px, #38bdf8 0 4px, transparent 5px) 0 0 / 80px 14px repeat-x,
+    radial-gradient(ellipse 50% 70% at 50% 0, transparent 70%, rgba(30,41,59,.55) 72%, transparent 76%) 0 0 / 40px 14px repeat-x;
+  filter: drop-shadow(0 0 4px rgba(250,204,21,.8));
+  animation: ny-garland 1.4s steps(2) infinite;
+}
+html.bosny .m-status::before { top: 2px; }
+@keyframes ny-garland { 50% { filter: drop-shadow(0 0 7px rgba(239,68,68,.9)) brightness(1.3) hue-rotate(40deg); } }
+
+/* Снежная шапка на окнах, доке и острове */
+html.bosny :is(.win, .m-dock, .island)::after {
+  content: ""; position: absolute; left: 0; right: 0; top: 0; height: 12px; z-index: 4; pointer-events: none; border-radius: inherit;
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 12' preserveAspectRatio='none'%3E%3Cpath d='M0 0h120v5c-5 0-6 5-11 5s-5-6-10-6-6 7-12 7-5-5-10-5-6 6-11 6-6-7-12-7-5 5-10 5-6-6-11-6-5 6-10 6-5-4-9-4-4 3-4 3z' fill='%23fff'/%3E%3C/svg%3E") 0 0 / 120px 12px repeat-x;
+  filter: drop-shadow(0 1px 1px rgba(15,23,42,.18));
+}
+html.bosny .island, html.bosny .m-dock { overflow: visible; }
+html.bosny .win-bar { padding-top: 6px; }
+
+/* Кнопки — праздничные: красные с золотым свечением */
+html.bosny .btn.primary { background: linear-gradient(180deg, #f87171, #b91c1c); box-shadow: inset 0 1px 0 rgba(255,255,255,.6), inset 0 -2px 6px rgba(0,0,0,.2), 0 0 0 1px rgba(251,191,36,.55), 0 6px 18px rgba(220,38,38,.35); }
+html.bosny .chip.active, html.bosny .round.on { background: linear-gradient(180deg, #ef4444, #b91c1c); }
+html.bosny .set-link.on, html.bosny .seg input:checked + span, html.bosny .set-tab.on { box-shadow: inset 0 1px 0 var(--lg-rim), 0 0 0 1px rgba(251,191,36,.55), 0 2px 8px var(--lg-shade); }
+html.bosny :is(.bstore-card, .gs-card, .b3-card, .about, .upd-offer) { box-shadow: inset 0 1px 0 var(--lg-rim), 0 0 0 1px rgba(251,191,36,.35), 0 6px 18px var(--lg-shade); }
+html.bosny .upd-new.ny { background: linear-gradient(135deg, rgba(220,38,38,.18), rgba(22,163,74,.18)); }
+html.bosny ::selection { background: rgba(220,38,38,.35); }
+
+/* Отсчёт до Нового года */
+.ny-countdown { display: inline-flex; align-items: center; gap: 6px; margin-top: 12px; padding: 8px 16px; border-radius: 999px; pointer-events: auto;
+  background: linear-gradient(135deg, rgba(220,38,38,.85), rgba(22,101,52,.85)); color: #fff; font: 400 calc(18px * var(--ts)) var(--ny-font);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.5), 0 0 0 1px rgba(251,191,36,.7), 0 8px 22px rgba(0,0,0,.2); text-shadow: 0 1px 2px rgba(0,0,0,.3); transition: transform .25s cubic-bezier(.2,1.6,.4,1); }
+.ny-countdown::before { content: "🎄"; }
+.ny-countdown:hover { transform: scale(1.04); }
+.m-ny { font-size: calc(15px * var(--ts)); margin-top: 10px; }
+
+/* Салют */
+.ny-fireworks { position: absolute; inset: 0; z-index: 9000; width: 100%; height: 100%; pointer-events: none; }
+.ny-banner { position: absolute; left: 0; right: 0; top: 38%; z-index: 9001; pointer-events: none; text-align: center; color: #fff; font-size: calc(clamp(34px, 8cqw, 84px) * var(--ts));
+  text-shadow: 0 0 18px #f59e0b, 0 0 40px #dc2626, 0 2px 4px rgba(0,0,0,.5); animation: ny-banner 6s ease both; }
+@keyframes ny-banner { 0% { opacity: 0; transform: scale(.6); } 12% { opacity: 1; transform: scale(1.05); } 20% { transform: scale(1); } 85% { opacity: 1; } 100% { opacity: 0; } }
+.shade-toggles .shade-tog { font-size: 20px; }
+
+/* Новогодняя клавиатура: еловая зелень, снег сверху, золотые буквы, пробел-леденец */
+html.bosny .kb { background: linear-gradient(180deg, #166534, #14532d); padding-top: 18px; }
+html.bosny .kb::after { content: ""; position: absolute; left: 0; right: 0; top: 0; height: 12px; pointer-events: none;
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 12' preserveAspectRatio='none'%3E%3Cpath d='M0 0h120v5c-5 0-6 5-11 5s-5-6-10-6-6 7-12 7-5-5-10-5-6 6-11 6-6-7-12-7-5 5-10 5-6-6-11-6-5 6-10 6-5-4-9-4-4 3-4 3z' fill='%23fff'/%3E%3C/svg%3E") 0 0 / 120px 12px repeat-x; }
+html.bosny .kb-key { color: #fde68a; text-shadow: 0 0 6px rgba(253,230,138,.5); }
+html.bosny .kb-key:active, html.bosny .kb-fn:active, html.bosny .kb-back:active { background: rgba(254,202,202,.25); }
+html.bosny .kb-bottom { background: rgba(127,29,29,.45); box-shadow: inset 0 0 0 1px rgba(251,191,36,.45); }
+html.bosny .kb-space { background: repeating-linear-gradient(-45deg, #dc2626 0 10px, #fff 10px 20px); color: #7f1d1d; font-weight: 800; text-shadow: 0 0 3px #fff, 0 0 6px #fff; }
+html.bosny .kb-shift { color: #fde68a; }
+html.bosny .kb-enter { background: linear-gradient(180deg, #fde68a, #f59e0b); color: #7f1d1d; }
+html.bosny .kb-globe { color: #86efac; }
+html.bosny .kb-emoji-tab.on { background: rgba(253,230,138,.3); }
+
+/* Адвент-календарь */
+.adv-head { text-align: center; }
+.adv-head h2 { font-size: calc(34px * var(--ts)); color: #b91c1c; text-shadow: 0 1px 0 #fff, 0 0 12px rgba(251,191,36,.6); }
+html[data-theme="dark"] .adv-head h2 { color: #fca5a5; text-shadow: 0 0 14px rgba(239,68,68,.6); }
+.adv-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(66px, 1fr)); gap: 8px; }
+.adv-door { position: relative; aspect-ratio: 1; display: grid; place-items: center; border-radius: 16px; color: #fff; perspective: 400px;
+  background: radial-gradient(circle at 30% 20%, rgba(255,255,255,.45), transparent 45%), linear-gradient(145deg, color-mix(in srgb, var(--c) 70%, #fff), var(--c));
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.6), inset 0 0 0 2px rgba(251,191,36,.6), 0 6px 14px rgba(0,0,0,.18); transition: transform .3s cubic-bezier(.2,1.6,.4,1); }
+.adv-door::before, .adv-door::after { content: ""; position: absolute; background: rgba(253,230,138,.85); pointer-events: none; }
+.adv-door::before { left: 50%; top: 0; bottom: 0; width: 6px; margin-left: -3px; }
+.adv-door::after { top: 50%; left: 0; right: 0; height: 6px; margin-top: -3px; }
+.adv-door.big { grid-column: span 2; grid-row: span 2; aspect-ratio: auto; }
+.adv-num { position: relative; z-index: 1; font-size: 26px; text-shadow: 0 2px 4px rgba(0,0,0,.35); background: var(--c); padding: 0 6px; border-radius: 10px; }
+.adv-door.big .adv-num { font-size: 44px; }
+.adv-door.ready { animation: adv-glow 1.6s ease-in-out infinite alternate; }
+.adv-door.ready:hover { transform: scale(1.06) rotate(-2deg); }
+@keyframes adv-glow { to { box-shadow: inset 0 1px 0 rgba(255,255,255,.6), inset 0 0 0 2px #fde68a, 0 0 18px rgba(250,204,21,.85); } }
+.adv-door.locked { filter: saturate(.55); }
+.adv-lock { position: absolute; right: 4px; bottom: 2px; z-index: 1; font-style: normal; font-size: 13px; }
+.adv-door.open { background: linear-gradient(145deg, rgba(255,255,255,.7), rgba(255,255,255,.35)); box-shadow: inset 0 0 0 2px rgba(251,191,36,.6), inset 0 4px 10px rgba(0,0,0,.15); }
+.adv-door.open::before, .adv-door.open::after { display: none; }
+.adv-gift { font-size: 30px; }
+.adv-door.big .adv-gift { font-size: 56px; }
+.adv-door.opening { animation: adv-open .45s ease-in forwards; }
+@keyframes adv-open { to { transform: rotateY(-100deg) scale(.9); opacity: .3; } }
+.adv-door.shake { animation: adv-shake .4s; }
+@keyframes adv-shake { 25% { transform: translateX(-4px) rotate(-3deg); } 75% { transform: translateX(4px) rotate(3deg); } }
+.adv-foot { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
+.adv-gifts { display: flex; flex-wrap: wrap; gap: 2px; flex: 1; }
+.adv-mini { font-size: 20px; }
+.adv-early { margin-left: auto; color: var(--ink-2); }
+.adv-card { position: absolute; inset: 0; z-index: 5; display: grid; place-items: center; padding: 20px; background: rgba(15,23,42,.35); backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px); }
+.adv-card-in { position: relative; display: flex; flex-direction: column; align-items: center; gap: 12px; max-width: 380px; padding: 28px 22px 20px; border-radius: 26px; text-align: center; font-size: calc(16px * var(--ts));
+  background: linear-gradient(160deg, #fff, #fef2f2); color: #1f2937; box-shadow: 0 0 0 3px #fbbf24, 0 24px 60px rgba(0,0,0,.35); animation: lg-in .4s cubic-bezier(.2,1.4,.4,1) both; }
+.adv-card-day { position: absolute; top: -18px; padding: 2px 16px; border-radius: 999px; background: #dc2626; color: #fff; font-size: 24px; box-shadow: 0 0 0 3px #fbbf24; }
+.adv-card-gift { font-size: 72px; animation: pet-hop .8s cubic-bezier(.2,1.6,.4,1) .2s both; }
+.adv-card-in .btn.outline { color: #1f2937; }

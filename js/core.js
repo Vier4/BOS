@@ -33,17 +33,23 @@ window.BOS = (function () {
   // Установленная версия системы. BOS 02 ставится только кнопкой «Обновить» в Настройках,
   // поэтому все устройства (и те, где BOS 02 уже запускалась) сначала работают как BOS 01.
   // BOS 03 тоже ставится только из Настроек. Каждая версия включает всё из предыдущих.
-  const LATEST = '03';
-  const LEVEL = { '02': 2, '03': 3 }[state.os] || 1;
-  const VERSION = `0${LEVEL}`;
+  // «03 New Year Edition» — новогоднее обновление поверх BOS 03.
+  const VERSIONS = ['01', '02', '03', '03ny'];
+  const LATEST = VERSIONS[VERSIONS.length - 1];
+  const LEVEL = VERSIONS.indexOf(state.os) + 1 || 1;
+  const versionLabel = (v) => (v === '03ny' ? '03 New Year Edition' : v);
+  const VERSION = versionLabel(VERSIONS[LEVEL - 1]);
   const is02 = LEVEL >= 2;
   const is03 = LEVEL >= 3;
+  const isNY = LEVEL >= 4;
   if (is02) document.documentElement.classList.add('bos02');
   if (is03) document.documentElement.classList.add('bos03');
+  if (isNY) document.documentElement.classList.add('bosny');
   const save = () => { if (!guestSession) write(STATE_KEY, state); };
   // Обои по умолчанию: у каждой версии свои. Выбранные вручную не трогаем, если они есть в этой версии.
-  const defaultWall = (level) => ({ 2: 'bos02', 3: 'peaks' }[level] || 'leaf');
-  const wallTooNew = (id) => (id === 'bos02' && !is02) || ((id === 'bos03' || id === 'peaks') && !is03);
+  const defaultWall = (level) => ({ 2: 'bos02', 3: 'peaks', 4: 'newyear' }[level] || 'leaf');
+  const WALL_LEVEL = { bos02: 2, bos03: 3, peaks: 3, newyear: 4 };
+  const wallTooNew = (id, level = LEVEL) => (WALL_LEVEL[id] || 1) > level;
   if (!state.wallpaperPicked || wallTooNew(state.wallpaper)) state.wallpaper = defaultWall(LEVEL);
 
   const displayName = () => (state.guest ? BOS.t('guest.name') : state.name);
@@ -116,6 +122,12 @@ window.BOS = (function () {
     emit('home');
   }
 
+  // Адвент-календарь появился в New Year Edition: тоже кладём на главный экран один раз.
+  if (isNY && !state.homeNY) {
+    state.homeNY = true;
+    if (!state.home.includes('advent')) state.home.push('advent');
+    save();
+  }
   // Магазин игр появился в BOS 03: один раз кладём его на главный экран.
   if (is03 && !state.home03) {
     state.home03 = true;
@@ -230,8 +242,9 @@ window.BOS = (function () {
   // Обновление и возврат на прошлую версию. После смены версии система перезапускается.
   function setOs(version) {
     state.os = version;
-    const level = Number(version);
-    if (!state.wallpaperPicked || (['bos03', 'peaks'].includes(state.wallpaper) && level < 3) || (state.wallpaper === 'bos02' && level < 2)) {
+    const level = VERSIONS.indexOf(version) + 1 || 1;
+    // Новогодняя версия ставит новогодние обои; при возврате обои из более новой версии убираются.
+    if (!state.wallpaperPicked || wallTooNew(state.wallpaper, level) || (level === 4 && LEVEL < 4)) {
       state.wallpaper = defaultWall(level);
     }
     if (guestSession) {
@@ -268,7 +281,7 @@ window.BOS = (function () {
   window.addEventListener('offline', () => emit('net'));
 
   // Только шрифты самого устройства: BOS не скачивает ничего из сети.
-  const FONTS = ['system', 'soft', 'serif', 'mono', 'type'];
+  const FONTS = ['system', 'soft', 'serif', 'mono', 'type', ...(isNY ? ['newyear'] : [])];
   function setFont(font) {
     state.font = font;
     document.documentElement.dataset.font = font;
@@ -482,7 +495,7 @@ window.BOS = (function () {
   }
 
   // Порядок приложений на экране «Приложения» и в Браузере.
-  const APP_ORDER = ['settings', 'files', 'browser', 'store', 'assistant', 'music', 'notes', 'calc', 'terminal', 'games', ...(is03 ? ['gamestore'] : [])];
+  const APP_ORDER = ['settings', 'files', 'browser', 'store', 'assistant', 'music', 'notes', 'calc', 'terminal', 'games', ...(is03 ? ['gamestore'] : []), ...(isNY ? ['advent'] : [])];
 
   // Приложения из B Store появляются в системе только после установки.
   // Встроенные можно удалить и вернуть через B Store, кроме Настроек и трёх, без которых их не вернуть.
@@ -608,7 +621,7 @@ window.BOS = (function () {
     setPassword, checkPassword, sha256,
     APP_ORDER, appIcon, appSearch, powerOff,
     STORE_APPS, availableApps, isAvailable, isInstalled, canRemove, install, uninstall, setOrder, setHomeOrder, setDeskPos, arrangeDesk,
-    VERSION, LATEST, LEVEL, is02, is03, setOs, B03_APPS, ICONS,
+    VERSION, VERSIONS, versionLabel, LATEST, LEVEL, is02, is03, isNY, setOs, B03_APPS, ICONS,
     guestSession, startGuest, endGuest, displayName, accountLabel,
     knownIds, rememberId, normalizeId, isValidId, ID_SUFFIX,
     factoryReset,

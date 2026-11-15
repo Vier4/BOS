@@ -105,12 +105,26 @@ BOS.createShade = function () {
   syncClock();
   setInterval(syncClock, 1000);
 
+  // New Year Edition: снег и салют прямо из шторки.
+  function nyToggles() {
+    if (!BOS.ny) return [];
+    const snow = h('button', { type: 'button', class: 'shade-tog', i18nTitle: 'ny.snow', onclick: () => BOS.ny.setSnow(state.snow === false) }, '❄');
+    const syncSnow = () => {
+      snow.classList.toggle('on', state.snow !== false);
+      snow.setAttribute('aria-pressed', String(state.snow !== false));
+    };
+    BOS.on('snow', syncSnow);
+    syncSnow();
+    const fire = h('button', { type: 'button', class: 'shade-tog ny-fire', i18nTitle: 'ny.fireworks', onclick: () => { close(); BOS.ny.fireworks(); } }, '🎆');
+    return [snow, fire];
+  }
+
   const sheet = h('div', { class: 'shade-sheet' },
     h('div', { class: 'shade-panel' },
       brightness.el,
       volume.el,
       h('div', { class: 'shade-side' },
-        h('div', { class: 'shade-toggles' }, plane, theme),
+        h('div', { class: 'shade-toggles' }, plane, theme, ...nyToggles()),
         h('div', { class: 'shade-media' },
           time,
           song,
