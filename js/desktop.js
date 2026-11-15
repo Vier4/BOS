@@ -83,7 +83,7 @@ BOS.runDesktop = function () {
     }
   }
 
-  const running = h('div', { class: 'island-chips' }, [...BOS.APP_ORDER, ...BOS.STORE_APPS].map((id) => {
+  const running = h('div', { class: 'island-chips' }, [...BOS.APP_ORDER, ...BOS.STORE_APPS].filter((id) => BOS.apps[id]).map((id) => {
     const chip = h('button', {
       type: 'button',
       class: 'chip',

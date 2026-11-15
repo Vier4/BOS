@@ -750,12 +750,15 @@
 
       function showMenu() {
         stopGame();
-        root.replaceChildren(h('div', { class: 'games-menu' }, GAMES.map((entry, i) => h('button', {
+        // Скачанные из Магазина игр игры появляются здесь же, после встроенных.
+        const owned = state.gamesOwned || [];
+        const list = GAMES.filter((entry) => !entry.store || owned.includes(entry.id));
+        root.replaceChildren(h('div', { class: 'games-menu' }, list.map((entry, i) => h('button', {
           type: 'button',
           class: 'game-card',
           onclick: () => play(entry),
         },
-          h('span', { class: 'game-glyph', style: `--hue:${Math.round((i * 360) / GAMES.length)}` }, entry.glyph),
+          h('span', { class: 'game-glyph', style: `--hue:${entry.hue ?? Math.round((i * 360) / list.length)}` }, entry.glyph),
           h('span', { i18n: `game.${entry.id}` })))));
       }
 
@@ -839,10 +842,22 @@
       win.el.addEventListener('keyup', onKey);
       win.disposers.push(stopGame);
 
+      // Магазин игр открывает нужную игру сразу.
+      BOS.playGame = (id) => {
+        const entry = GAMES.find((x) => x.id === id);
+        if (entry) play(entry);
+      };
+      win.disposers.push(() => { BOS.playGame = null; });
+      win.listen('gamesOwned', () => { if (root.querySelector('.games-menu')) showMenu(); });
+
       showMenu();
       body.append(root);
     },
   };
 
   BOS.GAME_IDS = GAMES.map((entry) => entry.id);
+  // Для Магазина игр: общие помощники и регистрация скачиваемых игр.
+  BOS.gameKit = { grid, canvasOf, shuffle, rand, DIRS, LINES };
+  BOS.defineGame = (id, glyph, start, meta) => GAMES.push({ id, glyph, start, store: true, ...meta });
+  BOS.storeGames = () => GAMES.filter((entry) => entry.store);
 })();

@@ -92,8 +92,9 @@
         paintSizes();
 
         return [
-          BOS.mobile || !BOS.is02 ? null : row('set.cursor', cursors),
-          BOS.mobile || !BOS.is02 ? null : row('set.cursorSize', cursorSizes),
+          BOS.mobile || !BOS.is02 || BOS.is03 ? null : row('set.cursor', cursors),
+          BOS.mobile || !BOS.is02 || BOS.is03 ? null : row('set.cursorSize', cursorSizes),
+          !BOS.mobile && BOS.cursorStudio ? h('div', { class: 'set-row cs-row-wrap' }, h('label', { i18n: 'set.cursor' }), BOS.cursorStudio(win)) : null,
           row('set.textSize', sizes),
           row('set.theme', h('div', { class: 'segs' },
             h('label', { class: 'seg' }, inputs[0], h('span', { i18n: 'theme.light' })),
@@ -158,7 +159,13 @@
         // Обновление ПО. На BOS 01 ждёт BOS 02: оно ставится только кнопкой «Обновить».
         // На BOS 02 обновлений нет, но можно вернуться на BOS 01, чтобы обновиться снова.
         const product = BOS.mobile ? 'BOS MOBILE' : 'BOS';
-        const updateState = h('p', { class: 'set-desc', i18n: BOS.is02 ? 'upd.current' : 'upd.found' });
+        // «Что нового» для BOS 02 и BOS 03.
+        const whatsNew = (level) => h('div', { class: 'upd-new' },
+          h('b', { i18n: 'upd.newV', i18nVars: { v: `0${level}` } }),
+          h('p', { class: 'set-desc', i18n: level === 3 ? 'upd.notes03' : 'upd.notes' }));
+        const latest = BOS.LEVEL >= Number(BOS.LATEST);
+        const foundState = () => { updateState.dataset.i18n = 'upd.foundV'; updateState.i18nVars = { v: BOS.LATEST }; BOS.applyI18nTo(updateState); };
+        const updateState = h('p', { class: 'set-desc', i18n: latest ? 'upd.current' : 'upd.foundV', i18nVars: { v: BOS.LATEST } });
         const checkButton = h('button', {
           type: 'button',
           class: 'btn outline',
@@ -168,9 +175,13 @@
             BOS.applyI18nTo(updateState);
             setTimeout(() => {
               checkButton.disabled = false;
-              updateState.dataset.i18n = BOS.is02 ? 'upd.latest' : 'upd.found';
-              BOS.applyI18nTo(updateState);
-              if (!BOS.is02) offer.hidden = false;
+              if (latest) {
+                updateState.dataset.i18n = 'upd.latest';
+                BOS.applyI18nTo(updateState);
+              } else {
+                foundState();
+                offer.hidden = false;
+              }
             }, 1400);
           },
         }, BOS.icon('update'), h('span', { i18n: 'upd.check' }));
@@ -214,25 +225,28 @@
           }, 80);
           win.disposers.push(() => clearInterval(timer));
         }
-        const installButton = h('button', { type: 'button', class: 'btn primary', onclick: () => runUpdate('02') },
+        const installButton = h('button', { type: 'button', class: 'btn primary', onclick: () => runUpdate(BOS.LATEST) },
           BOS.icon('download'), h('span', { i18n: 'upd.install' }));
         const offer = h('div', { class: 'upd-offer' },
           h('div', { class: 'about update-card' },
             mark('mark big'),
-            h('div', {}, h('b', {}, `${product} 02`), h('p', { i18n: 'upd.available' }))),
-          h('div', { class: 'upd-new' }, h('b', { i18n: 'upd.new' }), h('p', { class: 'set-desc', i18n: 'upd.notes' })),
+            h('div', {}, h('b', {}, `${product} ${BOS.LATEST}`), h('p', { i18n: 'upd.available' }))),
+          whatsNew(3),
+          BOS.LEVEL < 2 ? whatsNew(2) : null,
           installButton);
-        const rollbackButton = BOS.is02
-          ? h('button', { type: 'button', class: 'btn ghost upd-back', onclick: () => runUpdate('01') }, BOS.icon('restart'), h('span', { i18n: 'upd.rollback' }))
+        // Возврат на прошлую версию, чтобы можно было обновиться снова.
+        const previous = `0${BOS.LEVEL - 1}`;
+        const rollbackButton = BOS.LEVEL > 1
+          ? h('button', { type: 'button', class: 'btn ghost upd-back', onclick: () => runUpdate(previous) }, BOS.icon('restart'), h('span', { i18n: 'upd.rollbackTo', i18nVars: { v: previous } }))
           : null;
 
         const update = h('div', { class: 'set-sub', hidden: true },
           h('div', { class: 'about update-card' },
             mark('mark big'),
             h('div', {}, h('b', {}, `${product} ${BOS.VERSION}`), h('p', {}, h('span', { i18n: 'set.version' }), ` ${BOS.VERSION}`))),
-          BOS.is02 ? h('div', { class: 'upd-new' }, h('b', { i18n: 'upd.new' }), h('p', { class: 'set-desc', i18n: 'upd.notes' })) : null,
+          BOS.LEVEL >= 2 ? whatsNew(BOS.LEVEL) : null,
           updateState,
-          BOS.is02 ? null : offer,
+          latest ? null : offer,
           progress,
           stage,
           h('div', { class: 'sec-actions' }, checkButton, rollbackButton));

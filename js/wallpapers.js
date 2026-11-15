@@ -82,7 +82,30 @@
     </svg>`;
   }
 
+  // Обои BOS 03: размытые цветные пятна и стеклянная надпись — на них хорошо видно Liquid Glass.
+  function bos03(portrait, mini) {
+    const n = ++gradientId;
+    const W = portrait ? 1000 : WIDTH;
+    const H = portrait ? 1600 : HEIGHT;
+    const blobs = portrait
+      ? [[180, 260, 420, 'a'], [860, 520, 460, 'b'], [260, 1060, 480, 'c'], [820, 1400, 420, 'd'], [520, 760, 300, 'e']]
+      : [[220, 180, 420, 'a'], [1380, 260, 460, 'b'], [420, 880, 460, 'c'], [1240, 900, 420, 'd'], [820, 520, 300, 'e']];
+    const text = portrait
+      ? `<text class="b3-text" x="500" y="760" font-size="300">BOS</text><text class="b3-text" x="500" y="1060" font-size="300">03</text>`
+      : `<text class="b3-text" x="800" y="590" font-size="300">BOS 03</text>`;
+    return `<svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="xMidYMid slice"><defs>
+        <linearGradient id="b3-bg-${n}" x1="0" y1="0" x2="1" y2="1"><stop offset="0" style="stop-color:var(--b3-bg1)"/><stop offset="1" style="stop-color:var(--b3-bg2)"/></linearGradient>
+        <filter id="b3-blur-${n}" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="${mini ? 40 : 90}"/></filter>
+        <linearGradient id="b3-shine-${n}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff" stop-opacity=".75"/><stop offset=".5" stop-color="#fff" stop-opacity=".18"/><stop offset="1" stop-color="#fff" stop-opacity=".4"/></linearGradient>
+      </defs>
+      <rect width="${W}" height="${H}" fill="url(#b3-bg-${n})"/>
+      <g filter="url(#b3-blur-${n})">${blobs.map(([x, y, r, c]) => `<circle class="b3-blob-${c}" cx="${x}" cy="${y}" r="${r}"/>`).join('')}</g>
+      <g fill="url(#b3-shine-${n})" stroke="#fff" stroke-opacity=".7" stroke-width="3" font-weight="900">${text}</g>
+    </svg>`;
+  }
+
   const PAINTERS = {
+    bos03: () => '',
     bos02: () => '',
     leaf() {
       const n = ++gradientId;
@@ -151,8 +174,13 @@
   };
 
   // Обои BOS 02 появляются только после обновления.
-  BOS.WALLPAPERS = Object.keys(PAINTERS).filter((id) => BOS.is02 || id !== 'bos02');
-  BOS.wallpaperSvg = (id, mini = false) => (id === 'bos02' ? bos02(!mini && (BOS.mobile || innerHeight > innerWidth)) : svg(PAINTERS[id](mini)));
+  BOS.WALLPAPERS = Object.keys(PAINTERS).filter((id) => (id !== 'bos02' || BOS.is02) && (id !== 'bos03' || BOS.is03));
+  const portraitNow = (mini) => !mini && (BOS.mobile || innerHeight > innerWidth);
+  BOS.wallpaperSvg = (id, mini = false) => {
+    if (id === 'bos02') return bos02(portraitNow(mini));
+    if (id === 'bos03') return bos03(portraitNow(mini), mini);
+    return svg(PAINTERS[id](mini));
+  };
 
   // Слой обоев для рабочего стола и BOS MOBILE: сам следит за выбором в настройках.
   BOS.createWall = function () {
@@ -161,7 +189,7 @@
       const photo = BOS.state.wallpaper === 'photo' && BOS.getPhoto();
       wall.className = photo ? 'wall photo' : 'wall';
       if (photo) wall.replaceChildren(BOS.h('img', { src: photo, alt: '' }));
-      else wall.innerHTML = BOS.wallpaperSvg(BOS.state.wallpaper === 'photo' || !BOS.WALLPAPERS.includes(BOS.state.wallpaper) ? (BOS.is02 ? 'bos02' : 'leaf') : BOS.state.wallpaper);
+      else wall.innerHTML = BOS.wallpaperSvg(BOS.state.wallpaper === 'photo' || !BOS.WALLPAPERS.includes(BOS.state.wallpaper) ? (BOS.is03 ? 'bos03' : BOS.is02 ? 'bos02' : 'leaf') : BOS.state.wallpaper);
     }
     BOS.on('wallpaper', sync);
     // Обои BOS 02 перерисовываются, когда экран поворачивается из альбомного в книжный и обратно.
@@ -169,7 +197,7 @@
     window.addEventListener('resize', () => {
       if (portrait === innerHeight > innerWidth) return;
       portrait = !portrait;
-      if (BOS.state.wallpaper === 'bos02') sync();
+      if (BOS.state.wallpaper === 'bos02' || BOS.state.wallpaper === 'bos03') sync();
     });
     sync();
     return wall;

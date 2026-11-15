@@ -1,6 +1,6 @@
 {
   "name": "bos",
-  "version": "2.0.0",
+  "version": "3.0.0",
   "description": "BOS — операционная система, которая работает в браузере или как программа для компьютера",
   "private": true,
   "main": "electron/main.js",

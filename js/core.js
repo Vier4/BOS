@@ -32,11 +32,19 @@ window.BOS = (function () {
   );
   // Установленная версия системы. BOS 02 ставится только кнопкой «Обновить» в Настройках,
   // поэтому все устройства (и те, где BOS 02 уже запускалась) сначала работают как BOS 01.
-  const is02 = state.os === '02';
+  // BOS 03 тоже ставится только из Настроек. Каждая версия включает всё из предыдущих.
+  const LATEST = '03';
+  const LEVEL = { '02': 2, '03': 3 }[state.os] || 1;
+  const VERSION = `0${LEVEL}`;
+  const is02 = LEVEL >= 2;
+  const is03 = LEVEL >= 3;
   if (is02) document.documentElement.classList.add('bos02');
+  if (is03) document.documentElement.classList.add('bos03');
   const save = () => { if (!guestSession) write(STATE_KEY, state); };
-  // Обои по умолчанию: в BOS 02 — обои BOS 02, в BOS 01 — листик. Выбранные вручную не трогаем.
-  if (!state.wallpaperPicked || (!is02 && state.wallpaper === 'bos02')) state.wallpaper = is02 ? 'bos02' : 'leaf';
+  // Обои по умолчанию: у каждой версии свои. Выбранные вручную не трогаем, если они есть в этой версии.
+  const defaultWall = (level) => ({ 2: 'bos02', 3: 'bos03' }[level] || 'leaf');
+  const wallTooNew = (id) => (id === 'bos02' && !is02) || (id === 'bos03' && !is03);
+  if (!state.wallpaperPicked || wallTooNew(state.wallpaper)) state.wallpaper = defaultWall(LEVEL);
 
   const displayName = () => (state.guest ? BOS.t('guest.name') : state.name);
   const accountLabel = () => (state.id ? state.id + ID_SUFFIX : BOS.t('guest.label'));
@@ -106,6 +114,13 @@ window.BOS = (function () {
     if (pinned) state.home.push(id);
     save();
     emit('home');
+  }
+
+  // Магазин игр появился в BOS 03: один раз кладём его на главный экран.
+  if (is03 && !state.home03) {
+    state.home03 = true;
+    if (!state.home.includes('gamestore')) state.home.push('gamestore');
+    save();
   }
 
   // Пароль хранится как SHA-256 с солью. Без защищённого контекста
@@ -212,10 +227,13 @@ window.BOS = (function () {
     emit('kbLangs');
   }
 
-  // Обновление до BOS 02 и возврат на BOS 01. После смены версии система перезапускается.
+  // Обновление и возврат на прошлую версию. После смены версии система перезапускается.
   function setOs(version) {
     state.os = version;
-    if (!state.wallpaperPicked) state.wallpaper = version === '02' ? 'bos02' : 'leaf';
+    const level = Number(version);
+    if (!state.wallpaperPicked || (state.wallpaper === 'bos03' && level < 3) || (state.wallpaper === 'bos02' && level < 2)) {
+      state.wallpaper = defaultWall(level);
+    }
     if (guestSession) {
       // Гость ничего не сохраняет, но версия системы общая для устройства.
       const owner = read(STATE_KEY) || {};
@@ -463,11 +481,13 @@ window.BOS = (function () {
   }
 
   // Порядок приложений на экране «Приложения» и в Браузере.
-  const APP_ORDER = ['settings', 'files', 'browser', 'store', 'assistant', 'music', 'notes', 'calc', 'terminal', 'games'];
+  const APP_ORDER = ['settings', 'files', 'browser', 'store', 'assistant', 'music', 'notes', 'calc', 'terminal', 'games', ...(is03 ? ['gamestore'] : [])];
 
   // Приложения из B Store появляются в системе только после установки.
   // Встроенные можно удалить и вернуть через B Store, кроме Настроек и трёх, без которых их не вернуть.
-  const STORE_APPS = ['slides', 'montage'];
+  // 15 приложений BOS 03, которые есть только в B Store.
+  const B03_APPS = ['bubbles', 'colormix', 'stars', 'sheep', 'kaleido', 'habits', 'capsule', 'chimes', 'wheel', 'pet', 'beats', 'mood', 'cipher', 'focus', 'tales'];
+  const STORE_APPS = ['slides', 'montage', ...(is03 ? B03_APPS : [])];
   // Камера и Фото есть только в BOS MOBILE.
   const MOBILE_APPS = ['camera', 'photos'];
   const CORE_APPS = ['settings', 'browser', 'files', 'store'];
@@ -476,7 +496,7 @@ window.BOS = (function () {
   state.removed = state.removed.filter(canRemove);
   const isInstalled = (id) => (STORE_APPS.includes(id) ? state.installed.includes(id) : !state.removed.includes(id));
   function availableApps() {
-    const list = [...APP_ORDER, ...(BOS.mobile && is02 ? MOBILE_APPS : []), ...STORE_APPS].filter(isInstalled);
+    const list = [...APP_ORDER, ...(BOS.mobile && is02 ? MOBILE_APPS : []), ...STORE_APPS].filter((id) => BOS.apps[id] && isInstalled(id));
     const rank = new Map(list.map((id, i) => {
       const placed = state.order.indexOf(id);
       return [id, placed < 0 ? 1000 + i : placed];
@@ -587,7 +607,7 @@ window.BOS = (function () {
     setPassword, checkPassword, sha256,
     APP_ORDER, appIcon, appSearch, powerOff,
     STORE_APPS, availableApps, isAvailable, isInstalled, canRemove, install, uninstall, setOrder, setHomeOrder, setDeskPos, arrangeDesk,
-    VERSION: is02 ? '02' : '01', is02, setOs,
+    VERSION, LATEST, LEVEL, is02, is03, setOs, B03_APPS, ICONS,
     guestSession, startGuest, endGuest, displayName, accountLabel,
     knownIds, rememberId, normalizeId, isValidId, ID_SUFFIX,
     factoryReset,

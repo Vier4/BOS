@@ -41,12 +41,15 @@
         return actions;
       }
 
-      const cards = BOS.STORE_APPS.map((id) => h('article', { class: 'bstore-card' },
+      const card = (id) => h('article', { class: 'bstore-card' },
         h('div', { class: 'bstore-head' },
           BOS.appTile(id),
           h('div', {}, h('b', { i18n: BOS.apps[id].title }), h('small', { i18n: 'store.free' }))),
         h('p', { i18n: `store.desc.${id}` }),
-        actionsFor(id)));
+        actionsFor(id));
+      const cards = BOS.STORE_APPS.filter((id) => BOS.apps[id] && !BOS.B03_APPS.includes(id)).map(card);
+      // BOS 03: приложения, которые есть только в B Store.
+      const only = BOS.STORE_APPS.filter((id) => BOS.apps[id] && BOS.B03_APPS.includes(id)).map(card);
 
       const builtIn = [...BOS.APP_ORDER, ...(BOS.mobile && BOS.is02 ? BOS.MOBILE_APPS : [])].filter(BOS.canRemove).map((id) => h('div', { class: 'bstore-row' },
         BOS.appTile(id),
@@ -57,6 +60,8 @@
         h('div', { class: 'bstore-hero' },
           BOS.appTile('store'),
           h('div', {}, h('h2', { i18n: 'app.store' }), h('p', { i18n: 'store.sub' }))),
+        only.length ? h('div', { class: 'bstore-only' }, h('h3', { i18n: 'store.only' }), h('p', { class: 'b3-sub', i18n: 'store.onlySub' })) : null,
+        only.length ? h('div', { class: 'bstore-grid' }, only) : null,
         h('h3', { i18n: 'store.new' }),
         h('div', { class: 'bstore-grid' }, cards),
         h('h3', { i18n: 'store.builtIn' }),

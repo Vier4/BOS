@@ -1181,7 +1181,8 @@
   };
 
   BOS.t = function (key, vars) {
-    let text = (STRINGS[BOS.state.lang] || STRINGS.ru)[key] ?? key;
+    // Если надписи нет на выбранном языке, берём английскую, потом русскую.
+    let text = (STRINGS[BOS.state.lang] || {})[key] ?? STRINGS.en[key] ?? STRINGS.ru[key] ?? key;
     for (const [name, value] of Object.entries(vars || {})) {
       text = text.replace(`{${name}}`, value);
     }

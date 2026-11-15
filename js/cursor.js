@@ -21,6 +21,17 @@
   const arrow = cursor.firstChild;
   function paint() {
     if (!BOS.is02) return;
+    // BOS 03: мышка с этого устройства (готовая или своя).
+    if (BOS.cursor3) {
+      const def = BOS.cursor3.current();
+      arrow.innerHTML = BOS.cursor3.svg(def);
+      arrow.classList.toggle('glow', Boolean(def.glow));
+      cursor.style.setProperty('--glow', def.a);
+      cursor.style.setProperty('--cur-a', def.a);
+      cursor.style.setProperty('--cur-b', def.b);
+      cursor.style.setProperty('--cur-s', String(BOS.CURSOR_SIZES[BOS.cursor3.size()] || 1));
+      return;
+    }
     const id = BOS.CURSORS[BOS.state.cursor] ? BOS.state.cursor : 'aurora';
     arrow.innerHTML = BOS.cursorSvg(id);
     cursor.style.setProperty('--cur-a', BOS.CURSORS[id].a);
